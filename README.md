@@ -11,7 +11,7 @@
 
 **Solution:** ClinScribe AI reduces documentation time by 75%, generating professional medical summaries in under 3 minutes.
 
-
+![Dashboard Preview](img/dashboard.jpeg)
 
 AI-powered medical consultation assistant that transforms doctor's notes into professional summaries, action items, and patient-friendly communications.
 
@@ -28,6 +28,18 @@ ClinScribe AI (operating as **MediNotes Pro**) is a HIPAA-compliant SaaS platfor
 - Sign up with Clerk authentication
 - Enter a sample consultation
 - Generate your first AI-powered summary
+
+## 📸 Screenshots
+
+### Dashboard & Consultation Form
+Enter patient information and consultation notes with an intuitive, medical-grade interface.
+
+![Consultation Form](img/consultation_notes.png)
+
+### Generated Documentation
+AI-powered clinical summaries delivered in real-time via streaming.
+
+![Generated Documentation](img/generated_doc.png)
 
 ## Features
 
