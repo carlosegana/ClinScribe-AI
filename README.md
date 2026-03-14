@@ -191,8 +191,8 @@ Generates consultation summary via streaming response.
 **Request Body:**
 ```json
 {
-  "patient_name": "John Doe",
-  "date_of_visit": "2024-01-15",
+  "patient_name": "Frank Martin",
+  "date_of_visit": "2026-03-15",
   "notes": "Patient presented with..."
 }
 ```
