@@ -3,12 +3,17 @@
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black)
 ![React](https://img.shields.io/badge/React-19.1.4-61DAFB)
+![Status](https://img.shields.io/badge/status-in%20development-orange)
+
+> **Developed by Carlos Egana** — Advanced clinical documentation powered by AI
 
 AI-powered medical consultation assistant that transforms doctor's notes into professional summaries, action items, and patient-friendly communications.
 
 ## Overview
 
 ClinScribe AI (operating as **MediNotes Pro**) is a HIPAA-compliant SaaS platform designed for healthcare professionals. It leverages artificial intelligence to streamline the documentation process after patient consultations, saving time and ensuring consistent, professional medical records.
+
+**Status:** 🚧 Currently in active development. Features and UI are being continuously improved.
 
 ## Features
 
@@ -18,16 +23,18 @@ ClinScribe AI (operating as **MediNotes Pro**) is a HIPAA-compliant SaaS platfor
 - **Secure Authentication** — Enterprise-grade authentication powered by Clerk
 - **Real-time AI Processing** — Streaming responses with OpenAI's GPT models
 - **Subscription Management** — Integrated billing and subscription tiers via Clerk
+- **Medical-Tech UI** — High-contrast design system optimized for healthcare professionals
 
 ## Tech Stack
 
 ### Frontend
 - **Framework:** Next.js 16 (Pages Router)
 - **UI:** React 19 + TypeScript
-- **Styling:** Tailwind CSS 4
+- **Styling:** Tailwind CSS 4 with custom medical-tech design system
 - **Authentication:** Clerk
 - **State Management:** React Hooks
 - **Streaming:** Server-Sent Events (SSE)
+- **Design:** Medical-tech aesthetic with blue/teal/emerald high-contrast palette
 
 ### Backend
 - **API Framework:** FastAPI (Python)
