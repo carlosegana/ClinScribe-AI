@@ -11,23 +11,14 @@
 
 **Solution:** ClinScribe AI reduces documentation time by 75%, generating professional medical summaries in under 3 minutes.
 
-![Dashboard](img/dashboad.png)
-
 AI-powered medical consultation assistant that transforms doctor's notes into professional summaries, action items, and patient-friendly communications.
 
 ## Overview
+![Dashboard](img/dashboad.png)
 
 ClinScribe AI (operating as **MediNotes Pro**) is a HIPAA-compliant SaaS platform designed for healthcare professionals. It leverages artificial intelligence to streamline the documentation process after patient consultations, saving time and ensuring consistent, professional medical records.
 
 **Status:** ✅ Public beta — Core features stable and ready for testing
-
-## 🚀 Live Demo
-
-**Try it now:** [clinscribe-ai.vercel.app](https://clinscribe-ai.vercel.app)
-
-- Sign up with Clerk authentication
-- Enter a sample consultation
-- Generate your first AI-powered summary
 
 ## 📸 Screenshots
 
