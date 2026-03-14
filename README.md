@@ -41,6 +41,12 @@ AI-powered clinical summaries delivered in real-time via streaming.
 
 ![Generated Documentation](img/generated_doc.png)
 
+## 🎥 Demo Video
+
+Watch ClinScribe AI in action — from entering patient notes to generating a complete clinical summary.
+
+https://github.com/user-attachments/assets/demo.mp4
+
 ## Features
 
 - **Professional Summaries** — Generate comprehensive medical record summaries from consultation notes
