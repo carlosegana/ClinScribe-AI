@@ -20,10 +20,31 @@ ClinScribe AI (operating as **MediNotes Pro**) is a HIPAA-compliant SaaS platfor
 - **Professional Summaries** — Generate comprehensive medical record summaries from consultation notes
 - **Action Items** — Extract clear next steps and follow-up actions for every consultation
 - **Patient Communications** — Draft clear, patient-friendly email communications automatically
-- **Secure Authentication** — Enterprise-grade authentication powered by Clerk
-- **Real-time AI Processing** — Streaming responses with OpenAI's GPT models
-- **Subscription Management** — Integrated billing and subscription tiers via Clerk
+- **Secure Authentication** — User registration and login powered by Clerk with JWT validation
+- **Subscription Management** — Premium tier billing and access control via Clerk Pricing Tables
+- **Real-time AI Processing** — Streaming responses with OpenAI's GPT models via SSE
 - **Medical-Tech UI** — High-contrast design system optimized for healthcare professionals
+- **Serverless Deployment** — Frontend hosted on Vercel with edge network distribution
+
+## Integrations
+
+### Clerk (Authentication & Billing)
+- **User Authentication** — Sign up, sign in, password reset, and session management
+- **Protected Routes** — Premium content guarded by subscription plan validation
+- **Pricing Tables** — Integrated subscription tiers with Stripe billing (Clerk PricingTable component)
+- **JWT Templates** — Custom JWT claims for secure API authorization
+- **User Profiles** — Account management with UserButton component
+
+### Vercel (Deployment)
+- **Frontend Hosting** — Next.js app deployed on Vercel's edge network
+- **Serverless Functions** — API routes running as edge functions
+- **Environment Variables** — Secure secret management via Vercel dashboard
+- **Preview Deployments** — Automatic branch preview URLs
+
+### OpenAI (AI Processing)
+- **GPT-5-nano** — Streaming consultation summaries via Server-Sent Events
+- **FastAPI Backend** — Python API with Clerk JWT validation
+- **Real-time Output** — Markdown-formatted responses delivered progressively
 
 ## Tech Stack
 
