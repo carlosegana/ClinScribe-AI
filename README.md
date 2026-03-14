@@ -11,7 +11,7 @@
 
 **Solution:** ClinScribe AI reduces documentation time by 75%, generating professional medical summaries in under 3 minutes.
 
-![Dashboard Preview](img/dashboard.jpeg)
+![Dashboard](img/dashboad.png.png)
 
 AI-powered medical consultation assistant that transforms doctor's notes into professional summaries, action items, and patient-friendly communications.
 
@@ -45,7 +45,7 @@ AI-powered clinical summaries delivered in real-time via streaming.
 
 Watch ClinScribe AI in action — from entering patient notes to generating a complete clinical summary.
 
-https://github.com/user-attachments/assets/demo.mp4
+![Demo Video](img/demo.gif)
 
 ## Features
 
