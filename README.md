@@ -1,40 +1,174 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# ClinScribe AI (MediNotes Pro)
 
-## Getting Started
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black)
+![React](https://img.shields.io/badge/React-19.1.4-61DAFB)
 
-First, run the development server:
+AI-powered medical consultation assistant that transforms doctor's notes into professional summaries, action items, and patient-friendly communications.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Overview
+
+ClinScribe AI (operating as **MediNotes Pro**) is a HIPAA-compliant SaaS platform designed for healthcare professionals. It leverages artificial intelligence to streamline the documentation process after patient consultations, saving time and ensuring consistent, professional medical records.
+
+## Features
+
+- **Professional Summaries** — Generate comprehensive medical record summaries from consultation notes
+- **Action Items** — Extract clear next steps and follow-up actions for every consultation
+- **Patient Communications** — Draft clear, patient-friendly email communications automatically
+- **Secure Authentication** — Enterprise-grade authentication powered by Clerk
+- **Real-time AI Processing** — Streaming responses with OpenAI's GPT models
+- **Subscription Management** — Integrated billing and subscription tiers via Clerk
+
+## Tech Stack
+
+### Frontend
+- **Framework:** Next.js 16 (Pages Router)
+- **UI:** React 19 + TypeScript
+- **Styling:** Tailwind CSS 4
+- **Authentication:** Clerk
+- **State Management:** React Hooks
+- **Streaming:** Server-Sent Events (SSE)
+
+### Backend
+- **API Framework:** FastAPI (Python)
+- **Authentication:** Clerk JWT validation
+- **AI Model:** OpenAI GPT-5-nano
+- **Streaming:** SSE for real-time response delivery
+
+## Architecture
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Next.js       │────▶│   Clerk Auth    │────▶│   FastAPI       │
+│   Frontend      │     │   (JWT)         │     │   Backend       │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+         │                                               │
+         │                                               │
+         ▼                                               ▼
+┌─────────────────┐                           ┌─────────────────┐
+│   SSE Stream    │◀──────────────────────────│   OpenAI API    │
+│   (Markdown)    │                           │   (GPT-5-nano)  │
+└─────────────────┘                           └─────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Installation
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
+- Node.js 20+
+- Python 3.11+
+- OpenAI API key
+- Clerk account with JWT template configured
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Frontend Setup
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create `.env.local`:
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
+CLERK_SECRET_KEY=sk_...
+```
 
-## Learn More
+Run development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Backend Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+```bash
+cd api
+pip install -r requirements.txt
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Create `.env`:
+```env
+OPENAI_API_KEY=sk-...
+CLERK_JWKS_URL=https://.../jwks
+```
 
-## Deploy on Vercel
+Start API server:
+```bash
+uvicorn api.index:app --reload
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+1. **Sign In** — Access the platform using Clerk authentication
+2. **Subscription** — Upgrade to premium via the pricing table (if not subscribed)
+3. **New Consultation** — Enter patient name, visit date, and consultation notes
+4. **Generate Summary** — Click to stream AI-generated output including:
+   - Medical record summary for doctor's records
+   - Clear next steps and follow-up actions
+   - Draft email to patient in accessible language
+
+## Project Structure
+
+```
+saas/
+├── pages/              # Next.js frontend
+│   ├── index.tsx       # Landing page (MediNotes Pro)
+│   ├── product.tsx     # Consultation form + subscription
+│   ├── _app.tsx        # App wrapper with Clerk provider
+│   └── _document.tsx   # Document template
+├── api/                # FastAPI backend
+│   └── index.py        # SSE streaming endpoint
+├── styles/             # Global styles
+├── public/             # Static assets
+└── package.json        # Dependencies
+```
+
+## Security & Compliance
+
+- **HIPAA Awareness:** Designed with healthcare data sensitivity in mind
+- **JWT Authentication:** All API calls authenticated via Clerk
+- **No Data Persistence:** Consultation data processed in real-time, not stored
+- **Secure Streaming:** SSE connections authorized per-request
+
+## Environment Variables
+
+| Variable | Description | Location |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk frontend key | `.env.local` |
+| `CLERK_SECRET_KEY` | Clerk backend key | `.env.local` |
+| `OPENAI_API_KEY` | OpenAI API access | `api/.env` |
+| `CLERK_JWKS_URL` | Clerk JWKS endpoint | `api/.env` |
+
+## API Endpoint
+
+### POST `/api`
+
+Generates consultation summary via streaming response.
+
+**Headers:**
+- `Authorization: Bearer <clerk_jwt>`
+- `Content-Type: application/json`
+
+**Request Body:**
+```json
+{
+  "patient_name": "John Doe",
+  "date_of_visit": "2024-01-15",
+  "notes": "Patient presented with..."
+}
+```
+
+**Response:** `text/event-stream` — Markdown-formatted AI output
+
+## Future Enhancements
+
+- [ ] Multi-language support for patient communications
+- [ ] Integration with EHR systems
+- [ ] Voice-to-text note input
+- [ ] Custom summary templates by specialty
+- [ ] Audit logging for compliance
+
+## License
+
+Private — All rights reserved.
+
+---
+
+**Built for healthcare professionals who value their time and their patients' clarity.**
