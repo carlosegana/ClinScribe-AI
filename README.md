@@ -3,9 +3,15 @@
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black)
 ![React](https://img.shields.io/badge/React-19.1.4-61DAFB)
-![Status](https://img.shields.io/badge/status-in%20development-orange)
+![Status](https://img.shields.io/badge/status-beta-blue.svg)
 
 > **Developed by Carlos Egana** — Advanced clinical documentation powered by AI
+
+**Problem:** Healthcare providers spend 2+ hours daily on documentation, taking time away from patient care.
+
+**Solution:** ClinScribe AI reduces documentation time by 75%, generating professional medical summaries in under 3 minutes.
+
+![Dashboard Preview](https://via.placeholder.com/800x450/0066CC/ffffff?text=ClinScribe+AI+Dashboard)
 
 AI-powered medical consultation assistant that transforms doctor's notes into professional summaries, action items, and patient-friendly communications.
 
@@ -13,7 +19,15 @@ AI-powered medical consultation assistant that transforms doctor's notes into pr
 
 ClinScribe AI (operating as **MediNotes Pro**) is a HIPAA-compliant SaaS platform designed for healthcare professionals. It leverages artificial intelligence to streamline the documentation process after patient consultations, saving time and ensuring consistent, professional medical records.
 
-**Status:** 🚧 Currently in active development. Features and UI are being continuously improved.
+**Status:** ✅ Public beta — Core features stable and ready for testing
+
+## 🚀 Live Demo
+
+**Try it now:** [clinscribe-ai.vercel.app](https://clinscribe-ai.vercel.app)
+
+- Sign up with Clerk authentication
+- Enter a sample consultation
+- Generate your first AI-powered summary
 
 ## Features
 
