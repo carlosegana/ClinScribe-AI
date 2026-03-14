@@ -255,7 +255,7 @@ function ConsultationForm() {
                             <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center text-white shadow-lg">
                                 <DocumentIcon />
                             </div>
-                            <h2 className="text-xl font-bold text-[var(--dark)]">Generate Documentation</h2>
+                            <h2 className="text-xl font-bold text-[var(--dark)]">Generated Documentation</h2>
                             {loading && (
                                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 animate-pulse">
                                     Generating...
