@@ -235,3 +235,4 @@ Private — All rights reserved.
 ---
 
 **Built for healthcare professionals who value their time and their patients' clarity.**
+
