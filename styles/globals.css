@@ -764,6 +764,16 @@ textarea[className*="rounded-xl"]:focus,
     0 4px 16px rgba(0, 102, 204, 0.12) !important;
 }
 
+/* DatePicker portal — renders above the card's overflow:hidden clipping */
+#datepicker-portal {
+  position: relative;
+  z-index: 9999;
+}
+
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
 /* DatePicker dropdown styles */
 .react-datepicker {
   border-radius: 12px;

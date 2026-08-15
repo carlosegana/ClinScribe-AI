@@ -227,6 +227,10 @@ function ConsultationForm() {
                                       dateFormat="yyyy-MM-dd"
                                       placeholderText="Select date"
                                       required
+                                      portalId="datepicker-portal"
+                                      popperPlacement="bottom-start"
+                                      popperProps={{ strategy: 'fixed' }}
+                                      wrapperClassName="w-full"
                                       className="w-full px-4 py-3 bg-[var(--off-white)] border-2 border-[var(--border)] rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-[var(--dark)]"
                                   />
                                 </div>
