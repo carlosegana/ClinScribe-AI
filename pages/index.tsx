@@ -76,6 +76,12 @@ const List = ({ className = 'w-5 h-5' }: IconProps) => (
   </svg>
 );
 
+const Heart = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 20.5C5.5 16.5 3 12.9 3 9.3 3 6.6 5.1 4.5 7.8 4.5c1.7 0 3.2.9 4.2 2.3 1-1.4 2.5-2.3 4.2-2.3C18.9 4.5 21 6.6 21 9.3c0 3.6-2.5 7.2-9 11.2Z" />
+  </svg>
+);
+
 const Arrow = ({ className = 'w-4 h-4' }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <path d="M5 12h14M13 6l6 6-6 6" />
@@ -98,31 +104,31 @@ const ECG_PATH =
   'H970 c8,-9 16,-9 24,0 H1018 L1028,16 L1040,106 L1050,54 H1080 c13,-17 27,-17 40,0 H1200';
 
 const MARQUEE_ITEMS = [
-  'Structured clinical summaries',
-  'Follow-up action items',
-  'Patient-friendly email drafts',
-  'Real-time token streaming',
-  'JWT-authenticated requests',
-  'Zero data retention',
+  'Structured visit summaries',
+  'Prioritized follow-ups',
+  'Patient-ready messages',
+  'Drafted in one pass',
+  'You review and approve',
+  'Nothing kept afterward',
 ];
 
 const STEPS = [
   {
     n: '01',
-    title: 'Dictate the encounter',
-    body: 'Type or paste raw consultation notes exactly as you would scribble them — abbreviations, vitals, fragments. No template, no structure required.',
+    title: 'Bring the encounter as-is',
+    body: 'Type or paste your raw consultation notes — abbreviations, vitals, fragments and all. There is no template to fill in and no fields to arrange first.',
     icon: List,
   },
   {
     n: '02',
-    title: 'The model does the structuring',
-    body: 'The notes are streamed to a language model constrained by a clinical system prompt. Patient notes are treated strictly as data, never as instructions.',
+    title: 'It organizes the clinical detail',
+    body: 'The assistant reads the notes and sorts them into a clean clinical structure — history, findings, vitals, and plan. Your notes are used only to produce this output.',
     icon: Brain,
   },
   {
     n: '03',
-    title: 'Three artifacts, one pass',
-    body: 'A record summary, a prioritized next-steps list, and a plain-language email draft for the patient — validated for completeness before delivery.',
+    title: 'Three documents, one pass',
+    body: 'A visit summary for the record, a prioritized list of next steps, and a plain-language message for the patient — checked for completeness before you ever see them.',
     icon: Doc,
   },
 ];
@@ -130,7 +136,7 @@ const STEPS = [
 const STEP_PANELS = [
   {
     lines: [
-      { c: 'd', t: '// raw input' },
+      { c: 'd', t: '— visit notes —' },
       { c: '', t: '58yo M, chest pain x3d, non-radiating.' },
       { c: '', t: 'Hx HTN, on lisinopril 10mg.' },
       { c: '', t: 'BP 140/90  HR 88  SpO2 97%' },
@@ -140,20 +146,20 @@ const STEP_PANELS = [
   },
   {
     lines: [
-      { c: 'k', t: 'POST /api  ·  bearer <clerk_jwt>' },
-      { c: 'd', t: 'streaming · text/event-stream' },
-      { c: 'g', t: '▸ parsing vitals ........... ok' },
-      { c: 'g', t: '▸ extracting history ...... ok' },
-      { c: 'g', t: '▸ building next steps ..... ok' },
-      { c: 'k', t: '▸ drafting patient email ..' },
+      { c: 'k', t: 'organizing the encounter' },
+      { c: 'd', t: 'reading your notes …' },
+      { c: 'g', t: '▸ vitals ............... sorted' },
+      { c: 'g', t: '▸ history .............. sorted' },
+      { c: 'g', t: '▸ next steps ........... drafted' },
+      { c: 'k', t: '▸ patient message ......' },
     ],
   },
   {
     lines: [
-      { c: 'k', t: '### Summary of visit' },
+      { c: 'k', t: 'Summary of visit' },
       { c: '', t: '58yo male, 3-day non-radiating' },
       { c: '', t: 'chest pain. Hypertensive, on ACE-I.' },
-      { c: 'k', t: '### Next steps' },
+      { c: 'k', t: 'Next steps' },
       { c: 'g', t: '1. Review EKG + troponin' },
       { c: 'g', t: '2. Cardiology referral if elevated' },
     ],
@@ -164,31 +170,31 @@ const FEATURES = [
   {
     icon: Doc,
     title: 'Record-ready summaries',
-    body: 'Consultation notes become a structured summary written for the chart, not for marketing.',
+    body: 'Consultation notes become a structured summary written for the chart — not for marketing.',
     span: 'lg:col-span-3',
   },
   {
     icon: List,
     title: 'Prioritized next steps',
-    body: 'Follow-ups extracted as an ordered, actionable list.',
+    body: 'Follow-ups are pulled out as an ordered, ready-to-act list.',
     span: 'lg:col-span-3',
   },
   {
     icon: Mail,
-    title: 'Patient-language email',
+    title: 'Patient-language message',
     body: 'A draft written at a reading level patients actually understand — ready to edit and send.',
     span: 'lg:col-span-2',
   },
   {
     icon: Bolt,
-    title: 'Token-by-token streaming',
-    body: 'Output appears as it is generated over SSE. No spinner-and-wait.',
+    title: 'Drafts as you watch',
+    body: 'The output appears while it is being written, so you are reading and editing sooner.',
     span: 'lg:col-span-2',
   },
   {
     icon: Shield,
-    title: 'Authenticated, not stored',
-    body: 'Every request carries a Clerk JWT. Nothing is persisted by the application.',
+    title: 'Notes stay yours',
+    body: 'Your notes are used to produce the output and nothing else — the app keeps no record of them.',
     span: 'lg:col-span-2',
   },
 ];
@@ -196,8 +202,8 @@ const FEATURES = [
 const STATS = [
   { to: 15, suffix: ' min', label: 'Typical manual write-up' },
   { to: 3, suffix: ' min', label: 'With ClinScribe' },
-  { to: 3, suffix: '', label: 'Artifacts per pass' },
-  { to: 0, suffix: '', label: 'Records stored' },
+  { to: 3, suffix: '', label: 'Documents per pass' },
+  { to: 0, suffix: '', label: 'Notes kept afterward' },
 ];
 
 /* ------------------------------------------------------------------
@@ -279,7 +285,7 @@ export default function Home() {
           .from('.hero-pill', { opacity: 0, y: 18, duration: 0.7 })
           .from('.hero-word', { opacity: 0, yPercent: 115, rotateX: -55, duration: 1, stagger: 0.06 }, '-=0.35')
           .from('.hero-lead', { opacity: 0, y: 22, duration: 0.8 }, '-=0.55')
-          .from('.hero-cta > *', { opacity: 0, y: 18, duration: 0.6, stagger: 0.09 }, '-=0.5')
+          .from('.hero-cta', { opacity: 0, y: 18, duration: 0.6 }, '-=0.5')
           .from('.hero-trust', { opacity: 0, y: 14, duration: 0.6 }, '-=0.4')
           .from('.hero-panel', { opacity: 0, y: 46, scale: 0.95, duration: 1.1 }, '-=0.9')
           .from('.hero-scrollcue', { opacity: 0, duration: 0.6 }, '-=0.3');
@@ -421,7 +427,7 @@ export default function Home() {
 
       /* ---------- Reduced motion: render final state ---------- */
       mm.add('(prefers-reduced-motion: reduce)', () => {
-        gsap.set('[data-reveal], [data-reveal-group] > *, .hero-word, .hero-pill, .hero-lead, .hero-cta > *, .hero-trust, .hero-panel', {
+        gsap.set('[data-reveal], [data-reveal-group] > *, .hero-word, .hero-pill, .hero-lead, .hero-cta, .hero-trust, .hero-panel', {
           opacity: 1,
           y: 0,
           yPercent: 0,
@@ -459,12 +465,12 @@ export default function Home() {
         <title>ClinScribe AI — Clinical documentation, structured in one pass</title>
         <meta
           name="description"
-          content="Turn raw consultation notes into a record summary, next steps, and a patient-friendly email draft. Streaming AI documentation for clinicians."
+          content="Turn raw consultation notes into a visit summary, prioritized next steps, and a patient-friendly message — a clinical documentation assistant that keeps you in the editor's seat."
         />
-        <meta name="theme-color" content="#04070C" />
+        <meta name="theme-color" content="#F2F9FB" />
       </Head>
 
-      <div ref={root} className="cs-dark relative">
+      <div ref={root} className="cs-app relative">
         <div className="cs-progress" aria-hidden="true" />
 
         {/* ============ NAV ============ */}
@@ -482,8 +488,8 @@ export default function Home() {
 
               <div className="hidden md:flex items-center gap-9">
                 <a href="#how" className="cs-navlink">How it works</a>
-                <a href="#capabilities" className="cs-navlink">Capabilities</a>
-                <a href="#speed" className="cs-navlink">Speed</a>
+                <a href="#capabilities" className="cs-navlink">What you get</a>
+                <a href="#speed" className="cs-navlink">Time saved</a>
               </div>
 
               <div className="flex items-center gap-3">
@@ -503,24 +509,24 @@ export default function Home() {
           </div>
         </nav>
 
-        {/* ============ HERO ============ */}
+        {/* ============ HERO (light) ============ */}
         <section className="hero relative">
           <div className="hero-inner relative min-h-screen flex items-center overflow-hidden cs-noise">
-            {/* Atmosphere */}
+            {/* Atmosphere — soft clinical wash */}
             <div
-              className="cs-aurora cs-aurora--cyan hero-aurora-a"
-              style={{ width: 780, height: 780, top: '-24%', left: '48%', transform: 'translateX(-50%)' }}
+              className="cs-aurora cs-aurora--teal hero-aurora-a"
+              style={{ width: 760, height: 760, top: '-26%', left: '52%', transform: 'translateX(-50%)' }}
             />
             <div
-              className="cs-aurora cs-aurora--teal hero-aurora-b"
-              style={{ width: 620, height: 620, bottom: '-28%', left: '-12%' }}
+              className="cs-aurora cs-aurora--emerald hero-aurora-b"
+              style={{ width: 600, height: 600, bottom: '-30%', left: '-14%' }}
             />
             <div
-              className="cs-aurora cs-aurora--emerald"
-              style={{ width: 520, height: 520, top: '18%', right: '-16%' }}
+              className="cs-aurora cs-aurora--cyan"
+              style={{ width: 500, height: 500, top: '16%', right: '-18%' }}
             />
             <div className="cs-mesh hero-mesh" />
-            <div className="cs-vignette" />
+            <div className="cs-halo" />
 
             <div className="relative w-full max-w-[1240px] mx-auto px-6 lg:px-10 pt-28 pb-16">
               <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-14 lg:gap-16 items-center">
@@ -548,10 +554,10 @@ export default function Home() {
                     </span>
                   </h1>
 
-                  <p className="hero-lead cs-lead text-[17px] lg:text-[19px] mt-7 max-w-[30rem]">
-                    Paste the encounter exactly as you scribbled it. Get back a record summary,
-                    a prioritized follow-up list, and a patient-ready email — streamed token by
-                    token, in a single pass.
+                  <p className="hero-lead cs-lead text-[17px] lg:text-[19px] mt-7 max-w-[31rem]">
+                    Paste the encounter exactly as you scribbled it. Get back a visit summary, a
+                    prioritized follow-up list, and a message your patient can actually read —
+                    drafted in a single pass, with you as the editor.
                   </p>
 
                   <div className="hero-cta flex flex-wrap gap-3.5 mt-9">
@@ -576,26 +582,26 @@ export default function Home() {
 
                   <div className="hero-trust flex flex-wrap items-center gap-x-7 gap-y-3 mt-10 text-[13px] text-[var(--cs-fg-dim)]">
                     <span className="flex items-center gap-2">
-                      <Shield className="w-4 h-4 text-[var(--cs-teal)]" /> Clerk-authenticated
+                      <Shield className="w-4 h-4 text-[var(--cs-teal)]" /> Notes never stored
                     </span>
                     <span className="flex items-center gap-2">
-                      <Bolt className="w-4 h-4 text-[var(--cs-teal)]" /> Streaming output
+                      <Bolt className="w-4 h-4 text-[var(--cs-teal)]" /> Ready in one pass
                     </span>
                     <span className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-[var(--cs-teal)]" /> No data stored
+                      <Heart className="w-4 h-4 text-[var(--cs-teal)]" /> You stay the editor
                     </span>
                   </div>
                 </div>
 
-                {/* Right — device panel */}
+                {/* Right — clinical monitor (deep) */}
                 <div className="hero-panel relative">
-                  <div className="cs-glass p-0">
+                  <div className="cs-glass cs-deep p-0">
                     {/* Titlebar */}
                     <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--cs-line)]">
                       <div className="flex items-center gap-2.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#3B4A5E]" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#3B4A5E]" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#3B4A5E]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#2E4A5C]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#2E4A5C]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#2E4A5C]" />
                       </div>
                       <span className="cs-eyebrow !text-[10px] !tracking-[0.18em]">consultation · live</span>
                       <span className="cs-dot" />
@@ -606,9 +612,9 @@ export default function Home() {
                       <svg viewBox="0 0 1200 120" className="w-full h-[68px]" preserveAspectRatio="none" aria-hidden="true">
                         <defs>
                           <linearGradient id="csEcgGrad" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#0E9AAF" />
-                            <stop offset="50%" stopColor="#22D3EE" />
-                            <stop offset="100%" stopColor="#10B981" />
+                            <stop offset="0%" stopColor="#0EA5A5" />
+                            <stop offset="50%" stopColor="#22C0DC" />
+                            <stop offset="100%" stopColor="#34D399" />
                           </linearGradient>
                         </defs>
                         <path className="cs-ecg-track" d={ECG_PATH} />
@@ -623,7 +629,7 @@ export default function Home() {
                         { l: 'HR', v: '88' },
                         { l: 'SpO₂', v: '97%' },
                       ].map((m) => (
-                        <div key={m.l} className="rounded-xl border border-[var(--cs-line)] bg-white/[0.02] px-3.5 py-3">
+                        <div key={m.l} className="rounded-xl border border-[var(--cs-line)] bg-white/[0.03] px-3.5 py-3">
                           <div className="font-[family-name:var(--cs-mono)] text-[10px] tracking-[0.16em] text-[var(--cs-fg-dim)] uppercase">
                             {m.l}
                           </div>
@@ -635,12 +641,12 @@ export default function Home() {
                     </div>
 
                     {/* Output stream */}
-                    <div className="mx-5 my-5 rounded-xl border border-[var(--cs-line)] bg-[#060A11]/80 px-4 py-4">
+                    <div className="mx-5 my-5 rounded-xl border border-[var(--cs-line)] bg-[var(--cs-inset-bg)] px-4 py-4">
                       <div className="cs-terminal">
-                        <div className="k">### Summary of visit</div>
+                        <div className="k">Summary of visit</div>
                         <div>58yo male, 3-day non-radiating chest pain.</div>
                         <div>Hypertensive, on lisinopril 10mg.</div>
-                        <div className="k mt-1">### Next steps</div>
+                        <div className="k mt-1">Next steps</div>
                         <div className="g">1. Review EKG and troponin</div>
                         <div className="g">
                           2. Cardiology referral if elevated<span className="cs-caret ml-1" />
@@ -651,15 +657,15 @@ export default function Home() {
 
                   {/* Floating chip */}
                   <div
-                    className="hidden xl:flex w-max absolute -left-14 -bottom-7 cs-glass !rounded-2xl px-4 py-3 items-center gap-3 shadow-2xl"
+                    className="hidden xl:flex w-max absolute -left-14 -bottom-7 cs-glass cs-deep !rounded-2xl px-4 py-3 items-center gap-3 shadow-2xl"
                     data-parallax="-14"
                   >
-                    <span className="w-9 h-9 rounded-lg grid place-items-center bg-[rgba(16,185,129,0.12)] text-[var(--cs-emerald)]">
+                    <span className="w-9 h-9 rounded-lg grid place-items-center bg-[rgba(52,211,153,0.14)] text-[var(--cs-emerald)]">
                       <Clock className="w-[18px] h-[18px]" />
                     </span>
                     <div>
-                      <div className="text-[13px] font-semibold text-[var(--cs-fg)]">~3 min saved</div>
-                      <div className="text-[11px] text-[var(--cs-fg-dim)]">per consultation</div>
+                      <div className="text-[13px] font-semibold text-[var(--cs-fg)]">~12 min saved</div>
+                      <div className="text-[11px] text-[var(--cs-fg-dim)]">every consultation</div>
                     </div>
                   </div>
                 </div>
@@ -690,11 +696,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ============ PROBLEM ============ */}
+        {/* ============ PROBLEM (light) ============ */}
         <section className="relative py-28 lg:py-36 overflow-hidden">
           <div
             className="cs-aurora cs-aurora--teal"
-            style={{ width: 640, height: 640, top: '-20%', right: '-18%', opacity: 0.55 }}
+            style={{ width: 640, height: 640, top: '-20%', right: '-18%' }}
             data-parallax="-10"
           />
           <div className="relative max-w-[1240px] mx-auto px-6 lg:px-10">
@@ -709,9 +715,9 @@ export default function Home() {
                 </span>
               </h2>
               <p className="cs-lead text-[17px] lg:text-[18px] mt-7 max-w-[38rem]" data-reveal>
-                Every encounter ends the same way: a blank field and fifteen minutes of retyping
-                what you already know. ClinScribe compresses that into one streamed pass — and
-                keeps the clinician in the editing seat, where they belong.
+                Every visit ends the same way: a blank field and fifteen minutes spent retyping what
+                you already know. ClinScribe turns that into one drafted pass — and keeps you in the
+                editing seat, where the judgment belongs.
               </p>
             </div>
 
@@ -729,8 +735,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ============ WORKFLOW (scroll-telling) ============ */}
-        <section id="how" className="flow relative">
+        {/* ============ WORKFLOW — scroll-telling (deep) ============ */}
+        <section id="how" className="flow cs-deep relative">
           <div className="max-w-[1240px] mx-auto px-6 lg:px-10 py-20 lg:py-28">
             <div className="max-w-[46rem] mb-16 lg:mb-24">
               <span className="cs-eyebrow" data-reveal>How it works</span>
@@ -739,7 +745,7 @@ export default function Home() {
                   <span className="inline-block">Three steps.</span>
                 </span>
                 <span className="mask-line block overflow-hidden pb-[0.06em]">
-                  <span className="inline-block text-[var(--cs-fg-dim)]">One request.</span>
+                  <span className="inline-block text-[var(--cs-fg-dim)]">Nothing to set up.</span>
                 </span>
               </h2>
             </div>
@@ -759,7 +765,7 @@ export default function Home() {
                     >
                       <div className="flex items-center gap-4 mb-5">
                         <span className="cs-step-index">{s.n}</span>
-                        <span className="w-10 h-10 rounded-xl grid place-items-center border border-[var(--cs-line)] bg-white/[0.03] text-[var(--cs-cyan)]">
+                        <span className="w-10 h-10 rounded-xl grid place-items-center border border-[var(--cs-line)] bg-white/[0.04] text-[var(--cs-cyan)]">
                           <Icon className="w-[19px] h-[19px]" />
                         </span>
                       </div>
@@ -783,7 +789,7 @@ export default function Home() {
                   <div className="w-full relative">
                     <div
                       className="cs-aurora cs-aurora--cyan"
-                      style={{ width: 460, height: 460, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: 0.4 }}
+                      style={{ width: 460, height: 460, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: 0.5 }}
                     />
                     <div className="relative">
                       <Panel index={activeStep} />
@@ -795,12 +801,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ============ CAPABILITIES ============ */}
+        {/* ============ CAPABILITIES (light) ============ */}
         <section id="capabilities" className="relative py-28 lg:py-36 overflow-hidden bg-[var(--cs-abyss)] border-y border-[var(--cs-line)]">
-          <div className="cs-mesh" style={{ opacity: 0.45 }} />
+          <div className="cs-mesh" style={{ opacity: 0.5 }} />
           <div className="relative max-w-[1240px] mx-auto px-6 lg:px-10">
             <div className="max-w-[46rem] mb-14">
-              <span className="cs-eyebrow" data-reveal>Capabilities</span>
+              <span className="cs-eyebrow" data-reveal>What you get</span>
               <h2 className="cs-h2 text-[clamp(2rem,4.6vw,3.2rem)] mt-6" data-mask-lines>
                 <span className="mask-line block overflow-hidden pb-[0.06em]">
                   <span className="inline-block">Built narrow.</span>
@@ -816,11 +822,11 @@ export default function Home() {
                 const Icon = f.icon;
                 return (
                   <div key={f.title} className={`cs-card ${f.span}`} onMouseMove={trackPointer}>
-                    <span className="w-11 h-11 rounded-xl grid place-items-center bg-[rgba(34,211,238,0.09)] border border-[rgba(34,211,238,0.18)] text-[var(--cs-cyan)] mb-6">
+                    <span className="w-11 h-11 rounded-xl grid place-items-center bg-[rgba(14,143,176,0.09)] border border-[rgba(14,143,176,0.18)] text-[var(--cs-cyan)] mb-6">
                       <Icon className="w-5 h-5" />
                     </span>
                     <h3 className="text-[18px] font-bold tracking-[-0.02em] text-[var(--cs-fg)] mb-2.5">{f.title}</h3>
-                    <p className="text-[14.5px] leading-[1.65] text-[var(--cs-fg-soft)] font-light">{f.body}</p>
+                    <p className="text-[14.5px] leading-[1.65] text-[var(--cs-fg-soft)]">{f.body}</p>
                   </div>
                 );
               })}
@@ -828,17 +834,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ============ SPEED ============ */}
+        {/* ============ SPEED (light + deep monitor card) ============ */}
         <section id="speed" className="relative py-28 lg:py-36 overflow-hidden">
           <div
-            className="cs-aurora cs-aurora--cyan"
-            style={{ width: 700, height: 700, bottom: '-30%', left: '-14%', opacity: 0.5 }}
+            className="cs-aurora cs-aurora--emerald"
+            style={{ width: 700, height: 700, bottom: '-30%', left: '-14%' }}
             data-parallax="-8"
           />
           <div className="relative max-w-[1240px] mx-auto px-6 lg:px-10">
             <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
               <div>
-                <span className="cs-eyebrow" data-reveal>Time per consultation</span>
+                <span className="cs-eyebrow" data-reveal>Time per visit</span>
                 <h2 className="cs-h2 text-[clamp(2rem,4.4vw,3.1rem)] mt-6" data-mask-lines>
                   <span className="mask-line block overflow-hidden pb-[0.06em]">
                     <span className="inline-block">Fifteen minutes,</span>
@@ -848,12 +854,18 @@ export default function Home() {
                   </span>
                 </h2>
                 <p className="cs-lead text-[16.5px] mt-7 max-w-[30rem]" data-reveal>
-                  The model drafts; you review and edit. The bottleneck moves from typing to
-                  judgment — which is the only part that needed a clinician anyway.
+                  The assistant drafts; you review and refine. The bottleneck moves from typing to
+                  judgment — the only part that ever needed a clinician.
                 </p>
               </div>
 
-              <div className="cs-card !p-8 lg:!p-10" onMouseMove={trackPointer} data-reveal>
+              {/* Deep monitor card */}
+              <div
+                className="cs-deep cs-card !p-8 lg:!p-10"
+                style={{ background: 'var(--h-deep)' }}
+                onMouseMove={trackPointer}
+                data-reveal
+              >
                 <div className="space-y-9">
                   <div>
                     <div className="flex items-baseline justify-between mb-3.5">
@@ -862,7 +874,7 @@ export default function Home() {
                       </span>
                       <span className="text-[26px] font-bold text-[var(--cs-fg-dim)] tracking-[-0.03em]">15 min</span>
                     </div>
-                    <div className="h-2.5 rounded-full bg-white/[0.05] overflow-hidden">
+                    <div className="h-2.5 rounded-full bg-white/[0.06] overflow-hidden">
                       <div className="cs-bar cs-bar--old" data-scale="1" />
                     </div>
                   </div>
@@ -874,7 +886,7 @@ export default function Home() {
                       </span>
                       <span className="cs-stat-num text-[26px] tracking-[-0.03em]">3 min</span>
                     </div>
-                    <div className="h-2.5 rounded-full bg-white/[0.05] overflow-hidden">
+                    <div className="h-2.5 rounded-full bg-white/[0.06] overflow-hidden">
                       <div className="cs-bar cs-bar--new" data-scale="0.2" />
                     </div>
                   </div>
@@ -884,9 +896,9 @@ export default function Home() {
 
                 <div className="grid grid-cols-3 gap-5">
                   {[
-                    { v: '3', l: 'Artifacts' },
-                    { v: '1', l: 'Request' },
-                    { v: '0', l: 'Records kept' },
+                    { v: '3', l: 'Documents' },
+                    { v: '1', l: 'Pass' },
+                    { v: '0', l: 'Notes kept' },
                   ].map((x) => (
                     <div key={x.l}>
                       <div className="text-[24px] font-bold text-[var(--cs-fg)] tracking-[-0.03em]">{x.v}</div>
@@ -899,11 +911,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ============ CTA ============ */}
-        <section className="relative py-32 lg:py-40 overflow-hidden border-t border-[var(--cs-line)]">
+        {/* ============ CTA (deep) ============ */}
+        <section className="cs-deep relative py-32 lg:py-40 overflow-hidden">
           <div
             className="cta-glow cs-aurora cs-aurora--cyan"
-            style={{ width: 820, height: 560, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: 0.55 }}
+            style={{ width: 820, height: 560, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: 0.6 }}
           />
           <div className="cs-mesh" style={{ opacity: 0.6 }} />
 
@@ -917,12 +929,12 @@ export default function Home() {
                 <span className="inline-block">Give the paperwork</span>
               </span>
               <span className="mask-line block overflow-hidden pb-[0.06em]">
-                <span className="inline-block cs-shimmer-text">back its three minutes.</span>
+                <span className="inline-block cs-shimmer-text">back its twelve minutes.</span>
               </span>
             </h2>
             <p className="cs-lead text-[17px] mt-7 max-w-[34rem] mx-auto" data-reveal>
-              Sign in and run your first consultation through it. No setup, no template library,
-              no migration.
+              Sign in and run your first visit through it. No setup, no template library to build,
+              nothing to migrate.
             </p>
             <div className="flex flex-wrap gap-3.5 justify-center mt-10" data-reveal>
               <SignedOut>
@@ -944,19 +956,19 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ============ FOOTER ============ */}
-        <footer className="relative bg-[var(--cs-abyss)] border-t border-[var(--cs-line)] pt-16 pb-10">
+        {/* ============ FOOTER (deep) ============ */}
+        <footer className="cs-deep relative border-t border-[var(--cs-line)] pt-16 pb-10">
           <div className="max-w-[1240px] mx-auto px-6 lg:px-10">
             {/* Disclaimer — accurate, not decorative */}
-            <div className="rounded-2xl border border-[rgba(245,181,70,0.22)] bg-[rgba(245,181,70,0.05)] px-6 py-5 mb-14 flex gap-4 items-start">
-              <span className="mt-0.5 text-[var(--cs-amber)] shrink-0">
+            <div className="rounded-2xl border border-[rgba(245,181,70,0.28)] bg-[rgba(245,181,70,0.07)] px-6 py-5 mb-14 flex gap-4 items-start">
+              <span className="mt-0.5 text-[#F5B546] shrink-0">
                 <Shield className="w-5 h-5" />
               </span>
-              <p className="text-[13.5px] leading-[1.7] text-[#D9C49A]">
-                <strong className="font-semibold text-[var(--cs-amber)]">Demo project.</strong>{' '}
-                Consultation notes are transmitted to a third-party AI provider (OpenAI). This is
-                not a HIPAA-compliant service and carries no security certifications — do not
-                enter real protected health information (PHI).
+              <p className="text-[13.5px] leading-[1.7] text-[#EBD3A1]">
+                <strong className="font-semibold text-[#F5B546]">Demo project.</strong>{' '}
+                Consultation notes are sent to an external AI service to generate the output. This is
+                not a certified or HIPAA-compliant medical service and should not be used for care —
+                do not enter real protected health information (PHI).
               </p>
             </div>
 
@@ -966,23 +978,23 @@ export default function Home() {
                   <span className="cs-mark">
                     <Mark className="w-[18px] h-[18px]" />
                   </span>
-                  <span className="text-[17px] font-bold tracking-[-0.02em]">
+                  <span className="text-[17px] font-bold tracking-[-0.02em] text-[var(--cs-fg)]">
                     ClinScribe<span className="text-[var(--cs-cyan)]"> AI</span>
                   </span>
                 </div>
-                <p className="text-[14px] leading-[1.7] text-[var(--cs-fg-dim)] max-w-[24rem] font-light">
-                  Clinical documentation assistant. Notes in, structured records out — built as a
-                  technical demonstration by Carlos Egana.
+                <p className="text-[14px] leading-[1.7] text-[var(--cs-fg-soft)] max-w-[24rem]">
+                  A clinical documentation assistant. Notes in, structured records out — so the
+                  write-up stops competing with the patient in front of you.
                 </p>
               </div>
 
               <div>
-                <h4 className="cs-eyebrow !text-[10px] mb-5">Product</h4>
+                <h4 className="cs-eyebrow !text-[10px] mb-5">Explore</h4>
                 <ul className="space-y-3 text-[14px]">
                   {[
                     { l: 'How it works', h: '#how' },
-                    { l: 'Capabilities', h: '#capabilities' },
-                    { l: 'Speed', h: '#speed' },
+                    { l: 'What you get', h: '#capabilities' },
+                    { l: 'Time saved', h: '#speed' },
                   ].map((x) => (
                     <li key={x.l}>
                       <a href={x.h} className="cs-navlink">{x.l}</a>
@@ -992,11 +1004,11 @@ export default function Home() {
               </div>
 
               <div>
-                <h4 className="cs-eyebrow !text-[10px] mb-5">Stack</h4>
-                <ul className="space-y-3 text-[14px] text-[var(--cs-fg-dim)] font-light">
-                  <li>Next.js · React · TypeScript</li>
-                  <li>FastAPI · Python</li>
-                  <li>Clerk · OpenAI · Vercel</li>
+                <h4 className="cs-eyebrow !text-[10px] mb-5">About</h4>
+                <ul className="space-y-3 text-[14px] text-[var(--cs-fg-soft)]">
+                  <li>Built by Carlos Egana</li>
+                  <li>Public beta</li>
+                  <li>Not for clinical use</li>
                 </ul>
               </div>
             </div>
@@ -1021,7 +1033,7 @@ export default function Home() {
 ------------------------------------------------------------------ */
 function Panel({ index }: { index: number }) {
   const panel = STEP_PANELS[index] ?? STEP_PANELS[0];
-  const labels = ['input', 'processing', 'output'];
+  const labels = ['input', 'organizing', 'output'];
 
   return (
     <div className="cs-glass">
@@ -1036,7 +1048,7 @@ function Panel({ index }: { index: number }) {
               className="h-1 rounded-full transition-all duration-500"
               style={{
                 width: i === index ? 22 : 8,
-                background: i === index ? 'var(--cs-cyan)' : 'rgba(148,183,214,0.22)',
+                background: i === index ? 'var(--cs-cyan)' : 'rgba(150,205,225,0.22)',
               }}
             />
           ))}
@@ -1056,7 +1068,7 @@ function Panel({ index }: { index: number }) {
       <div className="px-5 py-3.5 border-t border-[var(--cs-line)] flex items-center gap-2.5">
         <span className="cs-dot" />
         <span className="font-[family-name:var(--cs-mono)] text-[11px] tracking-[0.14em] uppercase text-[var(--cs-fg-dim)]">
-          {index === 2 ? 'complete' : 'streaming'}
+          {index === 2 ? 'complete' : 'working'}
         </span>
       </div>
     </div>

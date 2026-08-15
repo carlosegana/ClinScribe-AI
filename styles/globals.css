@@ -40,26 +40,36 @@
   --surface: var(--white);
   --border: var(--light-gray);
 
-  /* --- Dark clinical system (landing) --- */
-  --cs-void: #04070C;
-  --cs-abyss: #070B12;
-  --cs-surface: #0C121C;
-  --cs-surface-2: #111926;
-  --cs-line: rgba(148, 183, 214, 0.11);
-  --cs-line-strong: rgba(148, 183, 214, 0.2);
+  /* --- Healthcare landing palette (raw) --- */
+  /* Light — clinical clean */
+  --h-bg: #F2F9FB;
+  --h-bg-2: #E7F3F7;
+  --h-white: #FFFFFF;
+  --h-ink: #0B3A4C;
+  --h-slate: #3B5C68;
+  --h-muted: #5F7C87;
+  --h-line: #DBE9EF;
+  --h-line-2: #C4DBE4;
+  --h-teal: #0E8FB0;        /* medical primary */
+  --h-teal-deep: #0A6E88;
+  --h-cyan: #22B8D4;
+  --h-green: #0FA46A;       /* health / vital */
+  --h-green-deep: #0C8A57;
 
-  --cs-cyan: #22D3EE;
-  --cs-teal: #0E9AAF;
-  --cs-deep: #0B6E8C;
-  --cs-emerald: #10B981;
-  --cs-amber: #F5B546;
+  /* Deep — clinical monitor / depth */
+  --h-deep: #062B3E;
+  --h-deep-2: #0A3A50;
+  --h-deep-ink: #EAF6FA;
+  --h-deep-soft: #A7CAD7;
+  --h-deep-dim: #6E93A1;
+  --h-deep-line: rgba(150, 205, 225, 0.14);
+  --h-deep-line-2: rgba(150, 205, 225, 0.28);
+  --h-deep-cyan: #3CD3EE;
+  --h-deep-teal: #22C0DC;
+  --h-mint: #34D399;
 
-  --cs-fg: #EAF2F8;
-  --cs-fg-soft: #A9BCCE;
-  --cs-fg-dim: #6E8298;
-
-  --cs-glow-cyan: rgba(34, 211, 238, 0.5);
-  --cs-glow-emerald: rgba(16, 185, 129, 0.4);
+  --cs-glow-cyan: rgba(60, 211, 238, 0.5);
+  --cs-glow-emerald: rgba(52, 211, 153, 0.42);
 
   --cs-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --cs-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -78,10 +88,53 @@ body {
 }
 
 /* ============================================================
-   DARK LANDING SCOPE  — everything below .cs-dark
+   LANDING SCOPE  — .cs-app (light) with .cs-deep sections
+   Semantic tokens flip per scope so class names stay stable and
+   the GSAP selectors never need to change.
    ============================================================ */
-.cs-dark {
-  background: var(--cs-void);
+.cs-app {
+  /* text + structure */
+  --cs-fg: var(--h-ink);
+  --cs-fg-soft: var(--h-slate);
+  --cs-fg-dim: var(--h-muted);
+  --cs-line: var(--h-line);
+  --cs-line-strong: var(--h-line-2);
+
+  /* accents (readable on white) */
+  --cs-cyan: var(--h-teal);
+  --cs-teal: var(--h-teal-deep);
+  --cs-emerald: var(--h-green);
+  --cs-abyss: var(--h-bg-2);
+  --cs-surface: var(--h-white);
+
+  /* component surfaces */
+  --cs-card-grad: linear-gradient(168deg, #FFFFFF, #F3FAFC);
+  --cs-card-shadow-rest: 0 2px 10px -6px rgba(11, 58, 76, 0.14);
+  --cs-card-shadow-hover: 0 26px 56px -28px rgba(11, 58, 76, 0.34), 0 0 0 1px rgba(14, 143, 176, 0.08);
+  --cs-card-hairline: linear-gradient(90deg, transparent, rgba(14, 143, 176, 0.45), transparent);
+  --cs-card-hover-border: rgba(14, 143, 176, 0.36);
+  --cs-sheen: rgba(14, 143, 176, 0.10);
+
+  --cs-glass-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.92), rgba(243, 250, 252, 0.82));
+  --cs-glass-border: var(--h-line-2);
+  --cs-glass-hairline: rgba(14, 143, 176, 0.5);
+
+  --cs-ghost-bg: rgba(14, 143, 176, 0.05);
+  --cs-ghost-border: var(--h-line-2);
+  --cs-ghost-fg: var(--h-ink);
+  --cs-ghost-bg-hover: rgba(14, 143, 176, 0.09);
+  --cs-ghost-border-hover: rgba(14, 143, 176, 0.42);
+
+  --cs-pill-bg: rgba(14, 143, 176, 0.07);
+  --cs-pill-border: rgba(14, 143, 176, 0.26);
+  --cs-pill-fg: var(--h-teal-deep);
+
+  --cs-stat-grad: linear-gradient(165deg, #0B3A4C 5%, #0E8FB0 92%);
+  --cs-shimmer-grad: linear-gradient(100deg, #0FA46A 0%, #0E8FB0 40%, #0A6E88 70%, #0E8FB0 100%);
+  --cs-mesh-line: rgba(14, 143, 176, 0.06);
+  --cs-inset-bg: rgba(11, 58, 76, 0.03);
+
+  background: var(--h-bg);
   color: var(--cs-fg);
   font-family: var(--cs-font);
   /* MUST be `clip`, not `hidden`. `overflow-x: hidden` makes this element a
@@ -91,8 +144,57 @@ body {
   overflow-x: clip;
 }
 
-.cs-dark ::selection {
-  background: rgba(34, 211, 238, 0.28);
+/* Deep sections — clinical monitor palette. Overrides the semantic tokens
+   for its subtree, so cards/terminals/eyebrows automatically re-theme. */
+.cs-deep {
+  --cs-fg: var(--h-deep-ink);
+  --cs-fg-soft: var(--h-deep-soft);
+  --cs-fg-dim: var(--h-deep-dim);
+  --cs-line: var(--h-deep-line);
+  --cs-line-strong: var(--h-deep-line-2);
+
+  --cs-cyan: var(--h-deep-cyan);
+  --cs-teal: var(--h-deep-teal);
+  --cs-emerald: var(--h-mint);
+  --cs-abyss: #04212F;
+  --cs-surface: var(--h-deep-2);
+
+  --cs-card-grad: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+  --cs-card-shadow-rest: 0 2px 12px -8px rgba(0, 0, 0, 0.5);
+  --cs-card-shadow-hover: 0 28px 64px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(60, 211, 238, 0.08);
+  --cs-card-hairline: linear-gradient(90deg, transparent, rgba(60, 211, 238, 0.45), transparent);
+  --cs-card-hover-border: rgba(60, 211, 238, 0.34);
+  --cs-sheen: rgba(60, 211, 238, 0.15);
+
+  --cs-glass-bg: linear-gradient(160deg, rgba(13, 49, 68, 0.88), rgba(6, 27, 39, 0.72));
+  --cs-glass-border: var(--h-deep-line-2);
+  --cs-glass-hairline: rgba(60, 211, 238, 0.55);
+
+  --cs-ghost-bg: rgba(255, 255, 255, 0.04);
+  --cs-ghost-border: var(--h-deep-line-2);
+  --cs-ghost-fg: var(--h-deep-ink);
+  --cs-ghost-bg-hover: rgba(60, 211, 238, 0.1);
+  --cs-ghost-border-hover: rgba(60, 211, 238, 0.42);
+
+  --cs-pill-bg: rgba(60, 211, 238, 0.09);
+  --cs-pill-border: rgba(60, 211, 238, 0.26);
+  --cs-pill-fg: #A7ECF8;
+
+  --cs-stat-grad: linear-gradient(170deg, #FFFFFF 8%, #9FE9F5 55%, #34D399 100%);
+  --cs-shimmer-grad: linear-gradient(100deg, #7DE9F8 0%, #3CD3EE 22%, #EAFDFF 42%, #34D399 62%, #22C0DC 100%);
+  --cs-mesh-line: rgba(60, 211, 238, 0.09);
+  --cs-inset-bg: rgba(2, 18, 27, 0.5);
+
+  background: var(--h-deep);
+  color: var(--cs-fg);
+}
+
+.cs-app ::selection {
+  background: rgba(14, 143, 176, 0.22);
+  color: var(--h-ink);
+}
+.cs-deep ::selection {
+  background: rgba(60, 211, 238, 0.3);
   color: #fff;
 }
 
@@ -100,7 +202,7 @@ body {
 .cs-eyebrow {
   font-family: var(--cs-mono);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--cs-cyan);
@@ -123,11 +225,11 @@ body {
 .cs-lead {
   color: var(--cs-fg-soft);
   line-height: 1.65;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .cs-shimmer-text {
-  background: linear-gradient(100deg, #7DE9F8 0%, #22D3EE 22%, #E8FBFF 42%, #22D3EE 62%, #0E9AAF 100%);
+  background: var(--cs-shimmer-grad);
   background-size: 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -146,8 +248,8 @@ body {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(34, 211, 238, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 211, 238, 0.055) 1px, transparent 1px);
+    linear-gradient(var(--cs-mesh-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--cs-mesh-line) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 80% 62% at 50% 38%, #000 30%, transparent 76%);
   -webkit-mask-image: radial-gradient(ellipse 80% 62% at 50% 38%, #000 30%, transparent 76%);
@@ -161,35 +263,44 @@ body {
   will-change: transform;
 }
 
-.cs-aurora--cyan { background: radial-gradient(circle, rgba(34, 211, 238, 0.3), transparent 68%); }
-.cs-aurora--teal { background: radial-gradient(circle, rgba(14, 154, 175, 0.28), transparent 68%); }
-.cs-aurora--emerald { background: radial-gradient(circle, rgba(16, 185, 129, 0.2), transparent 68%); }
+.cs-aurora--cyan { background: radial-gradient(circle, rgba(14, 143, 176, 0.18), transparent 68%); }
+.cs-aurora--teal { background: radial-gradient(circle, rgba(34, 184, 212, 0.16), transparent 68%); }
+.cs-aurora--emerald { background: radial-gradient(circle, rgba(15, 164, 106, 0.14), transparent 68%); }
+
+/* Brighter auroras inside deep sections */
+.cs-deep .cs-aurora--cyan { background: radial-gradient(circle, rgba(60, 211, 238, 0.26), transparent 68%); }
+.cs-deep .cs-aurora--teal { background: radial-gradient(circle, rgba(34, 192, 220, 0.24), transparent 68%); }
+.cs-deep .cs-aurora--emerald { background: radial-gradient(circle, rgba(52, 211, 153, 0.2), transparent 68%); }
 
 .cs-noise::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.035;
+  opacity: 0.02;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.cs-vignette {
+/* Soft clinical glow for the light hero (replaces the dark vignette) */
+.cs-halo {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse 100% 76% at 50% 44%, transparent 42%, rgba(4, 7, 12, 0.82) 100%);
+  background:
+    radial-gradient(ellipse 60% 50% at 72% 8%, rgba(34, 184, 212, 0.12), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 12% 100%, rgba(15, 164, 106, 0.1), transparent 62%);
 }
 
 /* --- Surfaces --- */
 .cs-glass {
-  background: linear-gradient(160deg, rgba(18, 27, 40, 0.82), rgba(9, 14, 22, 0.62));
-  border: 1px solid var(--cs-line);
+  background: var(--cs-glass-bg);
+  border: 1px solid var(--cs-glass-border);
   border-radius: 18px;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 30px 70px -34px rgba(6, 43, 62, 0.5);
 }
 
 /* Top hairline highlight — the detail that reads "expensive" */
@@ -198,16 +309,17 @@ body {
   position: absolute;
   top: 0; left: 12%; right: 12%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.55), transparent);
+  background: linear-gradient(90deg, transparent, var(--cs-glass-hairline), transparent);
 }
 
 .cs-card {
-  background: linear-gradient(165deg, rgba(17, 25, 38, 0.9), rgba(8, 12, 19, 0.72));
+  background: var(--cs-card-grad);
   border: 1px solid var(--cs-line);
   border-radius: 20px;
   padding: 30px;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--cs-card-shadow-rest);
   transition: border-color 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
 }
 
@@ -216,8 +328,8 @@ body {
   position: absolute;
   top: 0; left: 15%; right: 15%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.42), transparent);
-  opacity: 0.6;
+  background: var(--cs-card-hairline);
+  opacity: 0.55;
   transition: opacity 0.4s ease;
 }
 
@@ -229,13 +341,13 @@ body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.45s ease;
-  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(34, 211, 238, 0.13), transparent 62%);
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--cs-sheen), transparent 62%);
 }
 
 .cs-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(34, 211, 238, 0.32);
-  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(34, 211, 238, 0.07);
+  border-color: var(--cs-card-hover-border);
+  box-shadow: var(--cs-card-shadow-hover);
 }
 
 .cs-card:hover::after { opacity: 1; }
@@ -258,15 +370,15 @@ body {
   border: none;
   overflow: hidden;
   text-decoration: none;
-  color: #04121A;
-  background: linear-gradient(135deg, #6FE9FB 0%, #22D3EE 46%, #0E9AAF 100%);
-  box-shadow: 0 10px 34px -10px rgba(34, 211, 238, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #0E93B6 0%, #0A6E88 58%, #08596E 100%);
+  box-shadow: 0 12px 30px -12px rgba(10, 110, 136, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.22);
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
 }
 
 .cs-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 46px -12px rgba(34, 211, 238, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 44px -14px rgba(10, 110, 136, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .cs-btn:active { transform: translateY(-1px); }
@@ -277,7 +389,7 @@ body {
   position: absolute;
   top: 0; left: -120%;
   width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   transform: skewX(-22deg);
   transition: left 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -296,19 +408,20 @@ body {
   letter-spacing: -0.01em;
   cursor: pointer;
   text-decoration: none;
-  color: var(--cs-fg);
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid var(--cs-line-strong);
+  color: var(--cs-ghost-fg);
+  background: var(--cs-ghost-bg);
+  border: 1px solid var(--cs-ghost-border);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
 
 .cs-btn-ghost:hover {
-  background: rgba(34, 211, 238, 0.09);
-  border-color: rgba(34, 211, 238, 0.42);
-  color: #C9F6FF;
+  background: var(--cs-ghost-bg-hover);
+  border-color: var(--cs-ghost-border-hover);
+  color: var(--cs-teal);
   transform: translateY(-3px);
 }
+.cs-deep .cs-btn-ghost:hover { color: #C9F6FF; }
 
 /* --- Pills / badges --- */
 .cs-pill {
@@ -317,14 +430,14 @@ body {
   gap: 9px;
   padding: 8px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(34, 211, 238, 0.24);
-  background: rgba(34, 211, 238, 0.07);
+  border: 1px solid var(--cs-pill-border);
+  background: var(--cs-pill-bg);
   font-family: var(--cs-mono);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8DE7F8;
+  color: var(--cs-pill-fg);
   backdrop-filter: blur(10px);
 }
 
@@ -332,17 +445,18 @@ body {
   width: 7px; height: 7px;
   border-radius: 50%;
   background: var(--cs-emerald);
-  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.65);
+  box-shadow: 0 0 0 0 rgba(15, 164, 106, 0.6);
   animation: cs-ping 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+.cs-deep .cs-dot { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.65); }
 
 @keyframes cs-ping {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
-  70% { box-shadow: 0 0 0 9px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
 }
 
-/* --- ECG line --- */
+/* --- ECG line (deep monitor) --- */
 .cs-ecg-path {
   fill: none;
   stroke: url(#csEcgGrad);
@@ -354,7 +468,7 @@ body {
 
 .cs-ecg-track {
   fill: none;
-  stroke: rgba(34, 211, 238, 0.12);
+  stroke: rgba(60, 211, 238, 0.14);
   stroke-width: 1.5;
 }
 
@@ -362,12 +476,12 @@ body {
 .cs-progress {
   position: fixed;
   top: 0; left: 0;
-  height: 2px;
+  height: 3px;
   width: 100%;
   transform: scaleX(0);
   transform-origin: 0 50%;
-  background: linear-gradient(90deg, #0E9AAF, #22D3EE 45%, #10B981);
-  box-shadow: 0 0 14px rgba(34, 211, 238, 0.75);
+  background: linear-gradient(90deg, #0A6E88, #22B8D4 45%, #0FA46A);
+  box-shadow: 0 0 14px rgba(34, 184, 212, 0.55);
   z-index: 100;
 }
 
@@ -381,14 +495,15 @@ body {
 }
 
 .cs-nav[data-scrolled='true'] {
-  background: rgba(5, 9, 14, 0.92);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  border-bottom-color: var(--cs-line);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border-bottom-color: var(--h-line);
+  box-shadow: 0 8px 28px -20px rgba(11, 58, 76, 0.4);
 }
 
 /* Anchor targets must clear the fixed nav */
-.cs-dark [id] { scroll-margin-top: 84px; }
+.cs-app [id] { scroll-margin-top: 84px; }
 
 .cs-navlink {
   position: relative;
@@ -418,9 +533,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #04121A;
-  background: linear-gradient(135deg, #6FE9FB, #22D3EE 50%, #0E9AAF);
-  box-shadow: 0 6px 20px -6px rgba(34, 211, 238, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #12A0C4, #0E8FB0 50%, #0A6E88);
+  box-shadow: 0 8px 20px -8px rgba(14, 143, 176, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.35);
   flex-shrink: 0;
 }
 
@@ -441,7 +556,7 @@ body {
   font-family: var(--cs-font);
   font-weight: 800;
   letter-spacing: -0.045em;
-  background: linear-gradient(170deg, #FFFFFF 8%, #A9DFEE 55%, #0E9AAF 100%);
+  background: var(--cs-stat-grad);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -453,7 +568,7 @@ body {
   border-left: 1px solid var(--cs-line);
   padding-left: 30px;
   transition: border-color 0.5s ease, opacity 0.5s ease;
-  opacity: 0.32;
+  opacity: 0.34;
 }
 
 .cs-step[data-active='true'] {
@@ -471,7 +586,7 @@ body {
 
 .cs-step[data-active='true'] .cs-step-index { color: var(--cs-cyan); }
 
-/* --- Terminal / output mock --- */
+/* --- Terminal / output mock (deep monitor) --- */
 .cs-terminal {
   font-family: var(--cs-mono);
   font-size: 12.5px;
@@ -503,8 +618,8 @@ body {
 
 .cs-bar--old { background: linear-gradient(90deg, #35485F, #56708F); }
 .cs-bar--new {
-  background: linear-gradient(90deg, #0E9AAF, #22D3EE 60%, #6FE9FB);
-  box-shadow: 0 0 22px rgba(34, 211, 238, 0.42);
+  background: linear-gradient(90deg, #0A6E88, #22C0DC 60%, #34D399);
+  box-shadow: 0 0 22px rgba(34, 192, 220, 0.42);
 }
 
 /* --- Divider --- */
@@ -517,20 +632,20 @@ body {
 .js-on .cs-reveal { opacity: 0; }
 
 /* --- Focus --- */
-.cs-dark *:focus-visible {
+.cs-app *:focus-visible {
   outline: 2px solid var(--cs-cyan);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
-/* --- Scrollbar (dark pages) --- */
-.cs-dark ::-webkit-scrollbar { width: 10px; }
-.cs-dark ::-webkit-scrollbar-track { background: var(--cs-abyss); }
-.cs-dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--cs-teal), var(--cs-deep));
+/* --- Scrollbar (landing) --- */
+.cs-app ::-webkit-scrollbar { width: 10px; }
+.cs-app ::-webkit-scrollbar-track { background: var(--h-bg-2); }
+.cs-app ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--h-teal), var(--h-teal-deep));
   border-radius: 5px;
 }
-.cs-dark ::-webkit-scrollbar-thumb:hover { background: var(--cs-cyan); }
+.cs-app ::-webkit-scrollbar-thumb:hover { background: var(--h-cyan); }
 
 /* --- Reduced motion --- */
 @media (prefers-reduced-motion: reduce) {
