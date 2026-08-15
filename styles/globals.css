@@ -710,20 +710,95 @@ body {
 }
 
 .medical-card {
-  background: var(--surface);
-  border-radius: 16px;
-  padding: 28px;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
-  border: 1px solid var(--border);
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 102, 204, 0.06),
+    0 8px 32px rgba(0, 102, 204, 0.08);
+  border: 1.5px solid rgba(14, 143, 176, 0.12);
+  backdrop-filter: blur(8px);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   overflow: hidden;
 }
 
+.medical-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(14, 143, 176, 0.3), transparent);
+  pointer-events: none;
+}
+
 .medical-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
-  border-color: var(--primary-light);
+  transform: translateY(-6px);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    0 12px 32px rgba(0, 102, 204, 0.12),
+    0 20px 48px rgba(0, 102, 204, 0.12);
+  border-color: rgba(14, 143, 176, 0.24);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.99) 0%, rgba(243, 250, 252, 0.98) 100%);
+}
+
+/* Enhanced input and textarea styling for /product */
+input[className*="rounded-xl"],
+textarea[className*="rounded-xl"],
+.react-datepicker-wrapper input {
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 250, 252, 0.9) 100%) !important;
+  border-color: rgba(14, 143, 176, 0.14) !important;
+}
+
+input[className*="rounded-xl"]:focus,
+textarea[className*="rounded-xl"]:focus,
+.react-datepicker-wrapper input:focus {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 102, 204, 0.5) !important;
+  box-shadow:
+    0 0 0 3px rgba(0, 102, 204, 0.08),
+    0 4px 16px rgba(0, 102, 204, 0.12) !important;
+}
+
+/* DatePicker dropdown styles */
+.react-datepicker {
+  border-radius: 12px;
+  border: 1.5px solid rgba(14, 143, 176, 0.18);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(14, 143, 176, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  font-family: var(--cs-font);
+}
+
+.react-datepicker__header {
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.04), rgba(14, 143, 176, 0.05));
+  border-color: rgba(14, 143, 176, 0.1);
+  border-radius: 12px 12px 0 0;
+  padding: 16px;
+}
+
+.react-datepicker__day--selected {
+  background: linear-gradient(135deg, #0066CC 0%, #0E8FB0 100%);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.react-datepicker__day:hover {
+  background: rgba(0, 102, 204, 0.08);
+  border-radius: 8px;
+  color: #0F172A;
+}
+
+.react-datepicker__day--highlighted {
+  background: rgba(0, 102, 204, 0.04);
+}
+
+.react-datepicker__day--outside-month {
+  color: rgba(100, 116, 139, 0.4);
 }
 
 .medical-icon-circle {
@@ -959,5 +1034,75 @@ body {
   .markdown-content a:hover {
     color: var(--primary-dark);
     border-bottom-color: var(--primary-dark);
+  }
+}
+
+/* ============================================================
+   PRODUCT PAGE ENHANCEMENTS
+   ============================================================ */
+
+/* Submit button styling */
+button[type="submit"] {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+button[type="submit"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.2), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+button[type="submit"]:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+button[type="submit"]:active:not(:disabled) {
+  transform: scale(0.98) !important;
+}
+
+/* Loading state */
+button[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+/* Section headings with improved visual hierarchy */
+h1 {
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  letter-spacing: -0.01em;
+}
+
+/* Badge/Pill styling improvement */
+.inline-flex.items-center.gap-2 {
+  transition: all 0.3s ease;
+}
+
+.inline-flex.items-center.gap-2:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
+}
+
+/* Section spacing optimization */
+form > div {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
