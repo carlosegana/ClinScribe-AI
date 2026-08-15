@@ -14,6 +14,7 @@ export default function Document() {
       </Head>
       <body>
         <Main />
+        <div id="datepicker-portal" />
         <NextScript />
       </body>
     </Html>

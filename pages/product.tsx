@@ -189,7 +189,7 @@ function ConsultationForm() {
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Patient Info Card */}
-                    <div className="medical-card">
+                    <div className="medical-card" style={{ overflow: 'visible' }}>
                         <div className="flex items-center gap-3 mb-6">
                             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white shadow-lg">
                                 <UserIcon />
