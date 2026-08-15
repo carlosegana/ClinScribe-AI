@@ -1,252 +1,175 @@
-# ClinScribe AI (MediNotes Pro)
+<div align="center">
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
-![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black)
-![React](https://img.shields.io/badge/React-19.1.4-61DAFB)
-![Status](https://img.shields.io/badge/status-beta-blue.svg)
+<br/>
 
-## 🛠️ Built With
+# ClinScribe AI
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+### `clinical notes in` → `structured records out`
 
-> **Developed by Carlos Egana** — Advanced clinical documentation powered by AI
+Paste the encounter exactly as you scribbled it. Get back a visit summary, a prioritized
+follow-up list, and a patient-ready message — streamed in a single pass, with you as the editor.
 
-> ⚠️ **Disclaimer:** This is a portfolio / demo project. Consultation notes are
-> sent to a third-party AI provider (OpenAI). It is **not** a HIPAA-compliant
-> service and carries no security certifications. **Do not enter real protected
-> health information (PHI).**
+<br/>
 
-**Problem:** Healthcare providers spend 2+ hours daily on documentation, taking time away from patient care.
+[![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)](https://platform.openai.com)
+[![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=flat-square&logo=clerk&logoColor=white)](https://clerk.com)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com)
 
-**Solution:** ClinScribe AI reduces documentation time by 75%, generating professional medical summaries in under 3 minutes.
+<br/>
 
-AI-powered medical consultation assistant that transforms doctor's notes into professional summaries, action items, and patient-friendly communications.
-
-## Overview
-![Dashboard](img/dashboad.png)
-
-ClinScribe AI (operating as **MediNotes Pro**) is a demo SaaS platform that illustrates how AI can streamline documentation after patient consultations. It turns free-text notes into a structured summary, next steps, and a patient-friendly email draft. It is intended as a technical demonstration, not a certified clinical product.
-
-**Status:** ✅ Public beta — Core features stable and ready for testing
-
-## 📸 Screenshots
-
-### Dashboard & Consultation Form
-Enter patient information and consultation notes with an intuitive, medical-grade interface.
-
-![Consultation Form](img/consultation_notes.png)
-
-### Generated Documentation
-AI-powered clinical summaries delivered in real-time via streaming.
-
-![Generated Documentation](img/generated_doc.png)
-
-## 🎥 Demo Video
-
-Watch ClinScribe AI in action — from entering patient notes to generating a complete clinical summary.
-
-![Demo Video](img/demo.gif)
-
-## Features
-
-- **Professional Summaries** — Generate comprehensive medical record summaries from consultation notes
-- **Action Items** — Extract clear next steps and follow-up actions for every consultation
-- **Patient Communications** — Draft clear, patient-friendly email communications automatically
-- **Secure Authentication** — User registration and login powered by Clerk with JWT validation
-- **Subscription Management** — Premium tier billing and access control via Clerk Pricing Tables
-- **Real-time AI Processing** — Streaming responses with OpenAI's GPT models via SSE
-- **Medical-Tech UI** — High-contrast design system optimized for healthcare professionals
-- **Serverless Deployment** — Frontend hosted on Vercel with edge network distribution
-
-## Integrations
-
-### Clerk (Authentication & Billing)
-- **User Authentication** — Sign up, sign in, password reset, and session management
-- **Protected Routes** — Premium content guarded by subscription plan validation
-- **Pricing Tables** — Integrated subscription tiers with Stripe billing (Clerk PricingTable component)
-- **JWT Templates** — Custom JWT claims for secure API authorization
-- **User Profiles** — Account management with UserButton component
-
-### Vercel (Deployment)
-- **Frontend Hosting** — Next.js app deployed on Vercel's edge network
-- **Serverless Functions** — API routes running as edge functions
-- **Environment Variables** — Secure secret management via Vercel dashboard
-- **Preview Deployments** — Automatic branch preview URLs
-
-### OpenAI (AI Processing)
-- **Configurable model** — Set via `OPENAI_MODEL` (defaults to `gpt-4o-mini`); streaming consultation summaries via Server-Sent Events
-- **FastAPI Backend** — Python API with Clerk JWT validation
-- **Real-time Output** — Markdown-formatted responses delivered progressively
-
-## Tech Stack
-
-### Frontend
-- **Framework:** Next.js 16 (Pages Router)
-- **UI:** React 19 + TypeScript
-- **Styling:** Tailwind CSS 4 with custom medical-tech design system
-- **Authentication:** Clerk
-- **State Management:** React Hooks
-- **Streaming:** Server-Sent Events (SSE)
-- **Design:** Medical-tech aesthetic with blue/teal/emerald high-contrast palette
-
-### Backend
-- **API Framework:** FastAPI (Python)
-- **Authentication:** Clerk JWT validation
-- **AI Model:** OpenAI (configurable via `OPENAI_MODEL`, default `gpt-4o-mini`)
-- **Streaming:** SSE for real-time response delivery
-
-## Architecture
-
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Next.js       │────▶│   Clerk Auth    │────▶│   FastAPI       │
-│   Frontend      │     │   (JWT)         │     │   Backend       │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-         │                                               │
-         │                                               │
-         ▼                                               ▼
-┌─────────────────┐                           ┌─────────────────┐
-│   SSE Stream    │◀──────────────────────────│   OpenAI API    │
-│   (Markdown)    │                           │   (GPT-5-nano)  │
-└─────────────────┘                           └─────────────────┘
-```
-
-## Installation
-
-### Prerequisites
-- Node.js 20+
-- Python 3.11+
-- OpenAI API key
-- Clerk account with JWT template configured
-
-### Frontend Setup
-
-```bash
-npm install
-```
-
-Create `.env.local`:
-```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
-CLERK_SECRET_KEY=sk_...
-```
-
-Run development server:
-```bash
-npm run dev
-```
-
-### Backend Setup
-
-```bash
-cd api
-pip install -r requirements.txt
-```
-
-Create `.env`:
-```env
-OPENAI_API_KEY=sk-...
-CLERK_JWKS_URL=https://.../jwks
-```
-
-Start API server:
-```bash
-uvicorn api.index:app --reload
-```
-
-## Usage
-
-1. **Sign In** — Access the platform using Clerk authentication
-2. **Subscription** — Upgrade to premium via the pricing table (if not subscribed)
-3. **New Consultation** — Enter patient name, visit date, and consultation notes
-4. **Generate Summary** — Click to stream AI-generated output including:
-   - Medical record summary for doctor's records
-   - Clear next steps and follow-up actions
-   - Draft email to patient in accessible language
-
-## Project Structure
-
-```
-saas/
-├── pages/              # Next.js frontend
-│   ├── index.tsx       # Landing page (MediNotes Pro)
-│   ├── product.tsx     # Consultation form + subscription
-│   ├── _app.tsx        # App wrapper with Clerk provider
-│   └── _document.tsx   # Document template
-├── api/                # FastAPI backend
-│   └── index.py        # SSE streaming endpoint
-├── styles/             # Global styles
-├── public/             # Static assets
-└── package.json        # Dependencies
-```
-
-## Security & Compliance
-
-- **JWT Authentication:** All API calls authenticated via Clerk
-- **No Data Persistence:** Consultation data is processed in real-time and not stored by the app
-- **Per-request Authorization:** SSE connections are authorized per-request
-- **Input Limits & Rate Limiting:** Payload sizes are bounded and per-user requests are rate-limited
-- **Prompt-injection Guardrail:** Patient notes are treated as data, not instructions
-
-> **Not HIPAA compliant.** Notes are transmitted to OpenAI for processing. There
-> is no Business Associate Agreement (BAA), no encryption-at-rest of PHI, and no
-> third-party security certification. Do not use with real patient data.
-
-## Environment Variables
-
-| Variable | Description | Location |
-|----------|-------------|----------|
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk frontend key | `.env.local` |
-| `CLERK_SECRET_KEY` | Clerk backend key | `.env.local` |
-| `OPENAI_API_KEY` | OpenAI API access | `api/.env` |
-| `CLERK_JWKS_URL` | Clerk JWKS endpoint | `api/.env` |
-| `OPENAI_MODEL` | Model name (default `gpt-4o-mini`) | `api/.env` (optional) |
-| `OPENAI_TIMEOUT` | Request timeout in seconds (default `60`) | `api/.env` (optional) |
-| `RATE_LIMIT_MAX` | Max requests per window (default `10`) | `api/.env` (optional) |
-| `RATE_LIMIT_WINDOW` | Rate-limit window in seconds (default `60`) | `api/.env` (optional) |
-
-## API Endpoint
-
-### POST `/api`
-
-Generates consultation summary via streaming response.
-
-**Headers:**
-- `Authorization: Bearer <clerk_jwt>`
-- `Content-Type: application/json`
-
-**Request Body:**
-```json
-{
-  "patient_name": "Frank Martin",
-  "date_of_visit": "2026-03-15",
-  "notes": "Patient presented with..."
-}
-```
-
-**Response:** `text/event-stream` — Markdown-formatted AI output
-
-## Future Enhancements
-
-- [ ] Multi-language support for patient communications
-- [ ] Integration with EHR systems
-- [ ] Voice-to-text note input
-- [ ] Custom summary templates by specialty
-- [ ] Audit logging for compliance
-
-## License
-
-Private — All rights reserved.
+</div>
 
 ---
 
-**Built for healthcare professionals who value their time and their patients' clarity.**
+<div align="center">
 
+**Landing**
+
+<img src="docs/clinscribe-landing-scroll.gif" width="820" alt="Landing page" />
+
+<br/><br/>
+
+**Consultation**
+
+<img src="docs/clinscribe-product-form.gif" width="820" alt="Consultation form" />
+
+</div>
+
+---
+
+## Architecture
+
+A Next.js frontend and a Python inference endpoint deployed as a single Vercel project.
+Auth is verified at the edge of the API, not the client.
+
+```mermaid
+flowchart LR
+    A["Browser<br/>/product"] -->|"POST /api<br/>Bearer JWT"| B["FastAPI<br/>serverless fn"]
+    B --> C{"Clerk JWKS<br/>verify"}
+    C -->|"401"| A
+    C -->|"sub"| D["Rate limit<br/>10 req / 60s"]
+    D -->|"429"| A
+    D --> E["OpenAI<br/>chat.completions"]
+    E -.->|"SSE · JSON frames"| A
+    A --> F["Buffer → Markdown<br/>live render"]
+```
+
+| Stage | Detail |
+|:--|:--|
+| **Transport** | Server-Sent Events. Each frame is JSON-encoded so newlines survive intact. |
+| **Auth** | Clerk JWT verified server-side against the JWKS endpoint. `sub` becomes the rate-limit key. |
+| **Validation** | Pydantic bounds every field. Notes cap at 8 000 characters. |
+| **Guardrail** | Patient notes are treated strictly as data — embedded instructions are summarized, never executed. |
+| **Contract** | The final frame reports whether all three required sections were produced. |
+
+---
+
+## Output contract
+
+Every generation returns exactly three sections. The backend verifies their presence before
+closing the stream.
+
+```
+### Summary of visit for the doctor's records
+### Next steps for the doctor
+### Draft of email to patient in patient-friendly language
+```
+
+**Request**
+
+```jsonc
+POST /api
+Authorization: Bearer <clerk_jwt>
+
+{ "patient_name": "…", "date_of_visit": "2026-08-15", "notes": "…" }
+```
+
+**Stream**
+
+```jsonc
+data: { "text": "### Summary of visit…" }        // n frames
+data: { "done": true, "valid": true, "missing_sections": [] }
+data: { "error": "AI service error. Please try again." }   // terminal, on failure
+```
+
+---
+
+## Stack
+
+| Layer | Technology |
+|:--|:--|
+| **Frontend** | Next.js · TypeScript · Tailwind CSS |
+| **Motion** | GSAP + ScrollTrigger — pinned scroll-telling, parallax, stagger |
+| **Backend** | FastAPI · Pydantic — Vercel Python runtime |
+| **Inference** | OpenAI `gpt-4o-mini`, streamed |
+| **Identity** | Clerk — JWT + JWKS, plan-gated routes |
+| **Delivery** | Vercel — CI on push to `main` |
+
+---
+
+## Quick start
+
+```bash
+git clone https://github.com/carloseganac/ClinScribe-AI.git
+cd ClinScribe-AI
+npm install
+```
+
+Configure both halves:
+
+```bash
+cp env.local.example .env.local     # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, CLERK_SECRET_KEY
+cp api/.env.example api/.env        # OPENAI_API_KEY, CLERK_JWKS_URL
+```
+
+```bash
+npm run dev     # → http://localhost:3000
+```
+
+<details>
+<summary><b>Backend configuration</b></summary>
+
+<br/>
+
+| Variable | Default | Purpose |
+|:--|:--|:--|
+| `OPENAI_API_KEY` | — | Required |
+| `CLERK_JWKS_URL` | — | Required · JWT signature verification |
+| `OPENAI_MODEL` | `gpt-4o-mini` | Inference model |
+| `OPENAI_TIMEOUT` | `60` | Seconds |
+| `RATE_LIMIT_MAX` | `10` | Requests per window, per user |
+| `RATE_LIMIT_WINDOW` | `60` | Window, in seconds |
+
+</details>
+
+---
+
+## Engineering notes
+
+- **SSE framing** — chunks are JSON-encoded rather than raw. Plain SSE collapses `\n`, which
+  would destroy Markdown structure mid-stream.
+- **Rate limiting** — currently in-memory, so it holds only within a warm serverless instance.
+  A shared store (Upstash Redis) is the path to true multi-instance limiting.
+- **Prompt injection** — the system prompt pins notes as clinical data. Commands found inside
+  a note are reported as content, not obeyed.
+- **Overlay clipping** — the date picker renders through a portal so it escapes the card's
+  containing block instead of being clipped by it.
+
+---
+
+## Status
+
+**Public beta** · under active development.
+
+> Consultation notes are sent to an external AI service to generate output. This is **not a
+> certified or HIPAA-compliant medical service** and must not be used for care.
+> **Do not enter real protected health information (PHI).**
+
+---
+
+<div align="center">
+<sub>Built by <a href="https://github.com/carloseganac">Carlos Egaña</a></sub>
+</div>
