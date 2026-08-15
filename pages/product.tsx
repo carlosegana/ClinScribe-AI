@@ -96,17 +96,52 @@ function ConsultationForm() {
                 date_of_visit: visitDate?.toISOString().slice(0, 10),
                 notes,
             }),
-            onmessage(ev) {
-                buffer += ev.data;
-                setOutput(buffer);
+            openWhenHidden: true,
+            async onopen(res) {
+                if (res.ok) return;
+                if (res.status === 429) {
+                    setOutput('⚠️ Rate limit reached. Please wait a minute and try again.');
+                } else if (res.status === 401) {
+                    setOutput('⚠️ Your session expired. Please sign in again.');
+                } else {
+                    setOutput('⚠️ Could not start generation. Please try again.');
+                }
+                setLoading(false);
+                throw new Error(`Bad response status: ${res.status}`);
             },
-            onclose() { 
-                setLoading(false); 
+            onmessage(ev) {
+                if (!ev.data) return;
+                let payload: { text?: string; error?: string; done?: boolean; valid?: boolean; missing_sections?: string[] };
+                try {
+                    payload = JSON.parse(ev.data);
+                } catch {
+                    return; // ignore keep-alives / non-JSON frames
+                }
+                if (payload.error) {
+                    setOutput((prev) => `${prev}\n\n⚠️ ${payload.error}`);
+                    setLoading(false);
+                    controller.abort();
+                    return;
+                }
+                if (payload.text) {
+                    buffer += payload.text; // newlines preserved via JSON
+                    setOutput(buffer);
+                }
+                if (payload.done) {
+                    if (!payload.valid) {
+                        console.warn('Incomplete summary, missing sections:', payload.missing_sections);
+                    }
+                    setLoading(false);
+                }
+            },
+            onclose() {
+                setLoading(false);
             },
             onerror(err) {
                 console.error('SSE error:', err);
                 controller.abort();
                 setLoading(false);
+                throw err; // stop fetchEventSource's automatic retry loop
             },
         });
     }

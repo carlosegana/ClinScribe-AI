@@ -1,437 +1,1064 @@
 "use client"
 
+import { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import Link from 'next/link';
+import Head from 'next/head';
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 
-// Medical Icons
-const MedicalCrossIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2v20M2 12h20" />
+/* ------------------------------------------------------------------
+   SSR-safe layout effect
+------------------------------------------------------------------ */
+const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+/* ------------------------------------------------------------------
+   Icons (SVG, 1.5 stroke — thinner reads more premium than 2)
+------------------------------------------------------------------ */
+type IconProps = { className?: string };
+
+const Mark = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
+    <path d="M12 5v14M5 12h14" />
   </svg>
 );
 
-const StethoscopeIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+const Pulse = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 12h4l2-7 4 14 2.5-7H22" />
   </svg>
 );
 
-const HeartRateIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+const Brain = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9.5 3A3.5 3.5 0 0 0 6 6.5v.34A3 3 0 0 0 4 9.7a3 3 0 0 0 1 2.24A3.2 3.2 0 0 0 4.4 14a3 3 0 0 0 2.1 2.86A3 3 0 0 0 9.5 21a2.5 2.5 0 0 0 2.5-2.5V5.5A2.5 2.5 0 0 0 9.5 3Z" />
+    <path d="M14.5 3A3.5 3.5 0 0 1 18 6.5v.34a3 3 0 0 1 2 2.86 3 3 0 0 1-1 2.24 3.2 3.2 0 0 1 .6 2.06 3 3 0 0 1-2.1 2.86A3 3 0 0 1 14.5 21a2.5 2.5 0 0 1-2.5-2.5" />
   </svg>
 );
 
-const DocumentIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+const Shield = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 3l7.5 3v5.5c0 4.6-3.1 8.4-7.5 9.5-4.4-1.1-7.5-4.9-7.5-9.5V6L12 3Z" />
+    <path d="M9.2 12.2l2 2 3.6-3.8" />
   </svg>
 );
 
-const BrainIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+const Clock = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7.5V12l3 2" />
   </svg>
 );
 
-const ShieldIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+const Doc = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+    <path d="M14 3v5h5M9 13h6M9 17h4" />
   </svg>
 );
 
-const ActivityIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+const Mail = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m3.5 7 8.5 6 8.5-6" />
   </svg>
 );
 
-const ClockIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+const Bolt = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M13 2 4.5 13.5H11L10.5 22 19.5 10.5H13L13 2Z" />
   </svg>
 );
 
-const CheckIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+const List = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" />
   </svg>
 );
 
-// Stats Data
-const stats = [
-  { value: '10,000+', label: 'Clinical Summaries Generated', icon: DocumentIcon },
-  { value: '98.5%', label: 'Accuracy Rate', icon: ActivityIcon },
-  { value: '500+', label: 'Healthcare Providers', icon: StethoscopeIcon },
-  { value: '75%', label: 'Time Saved', icon: ClockIcon },
+const Arrow = ({ className = 'w-4 h-4' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14M13 6l6 6-6 6" />
+  </svg>
+);
+
+const Chevron = ({ className = 'w-5 h-5' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+);
+
+/* ------------------------------------------------------------------
+   Data
+------------------------------------------------------------------ */
+const ECG_PATH =
+  'M0,60 H70 c8,-9 16,-9 24,0 H118 L128,16 L140,106 L150,54 H180 c13,-17 27,-17 40,0 H300 ' +
+  'H370 c8,-9 16,-9 24,0 H418 L428,16 L440,106 L450,54 H480 c13,-17 27,-17 40,0 H600 ' +
+  'H670 c8,-9 16,-9 24,0 H718 L728,16 L740,106 L750,54 H780 c13,-17 27,-17 40,0 H900 ' +
+  'H970 c8,-9 16,-9 24,0 H1018 L1028,16 L1040,106 L1050,54 H1080 c13,-17 27,-17 40,0 H1200';
+
+const MARQUEE_ITEMS = [
+  'Structured clinical summaries',
+  'Follow-up action items',
+  'Patient-friendly email drafts',
+  'Real-time token streaming',
+  'JWT-authenticated requests',
+  'Zero data retention',
 ];
 
-// Features Data
-const features = [
+const STEPS = [
   {
-    title: 'AI-Powered Documentation',
-    description: 'Generate comprehensive clinical summaries, SOAP notes, and treatment plans using advanced natural language processing.',
-    icon: BrainIcon,
-    color: 'from-blue-600 to-blue-700',
+    n: '01',
+    title: 'Dictate the encounter',
+    body: 'Type or paste raw consultation notes exactly as you would scribble them — abbreviations, vitals, fragments. No template, no structure required.',
+    icon: List,
   },
   {
-    title: 'Real-time Analysis',
-    description: 'Process patient data instantly with live vital sign interpretation and automated risk assessment algorithms.',
-    icon: HeartRateIcon,
-    color: 'from-teal-600 to-teal-700',
+    n: '02',
+    title: 'The model does the structuring',
+    body: 'The notes are streamed to a language model constrained by a clinical system prompt. Patient notes are treated strictly as data, never as instructions.',
+    icon: Brain,
   },
   {
-    title: 'HIPAA Compliant Security',
-    description: 'Enterprise-grade encryption and security protocols ensure patient data remains protected at all times.',
-    icon: ShieldIcon,
-    color: 'from-emerald-600 to-emerald-700',
+    n: '03',
+    title: 'Three artifacts, one pass',
+    body: 'A record summary, a prioritized next-steps list, and a plain-language email draft for the patient — validated for completeness before delivery.',
+    icon: Doc,
   },
 ];
 
+const STEP_PANELS = [
+  {
+    lines: [
+      { c: 'd', t: '// raw input' },
+      { c: '', t: '58yo M, chest pain x3d, non-radiating.' },
+      { c: '', t: 'Hx HTN, on lisinopril 10mg.' },
+      { c: '', t: 'BP 140/90  HR 88  SpO2 97%' },
+      { c: '', t: 'EKG ordered. Trop pending.' },
+      { c: 'd', t: '_' },
+    ],
+  },
+  {
+    lines: [
+      { c: 'k', t: 'POST /api  ·  bearer <clerk_jwt>' },
+      { c: 'd', t: 'streaming · text/event-stream' },
+      { c: 'g', t: '▸ parsing vitals ........... ok' },
+      { c: 'g', t: '▸ extracting history ...... ok' },
+      { c: 'g', t: '▸ building next steps ..... ok' },
+      { c: 'k', t: '▸ drafting patient email ..' },
+    ],
+  },
+  {
+    lines: [
+      { c: 'k', t: '### Summary of visit' },
+      { c: '', t: '58yo male, 3-day non-radiating' },
+      { c: '', t: 'chest pain. Hypertensive, on ACE-I.' },
+      { c: 'k', t: '### Next steps' },
+      { c: 'g', t: '1. Review EKG + troponin' },
+      { c: 'g', t: '2. Cardiology referral if elevated' },
+    ],
+  },
+];
+
+const FEATURES = [
+  {
+    icon: Doc,
+    title: 'Record-ready summaries',
+    body: 'Consultation notes become a structured summary written for the chart, not for marketing.',
+    span: 'lg:col-span-3',
+  },
+  {
+    icon: List,
+    title: 'Prioritized next steps',
+    body: 'Follow-ups extracted as an ordered, actionable list.',
+    span: 'lg:col-span-3',
+  },
+  {
+    icon: Mail,
+    title: 'Patient-language email',
+    body: 'A draft written at a reading level patients actually understand — ready to edit and send.',
+    span: 'lg:col-span-2',
+  },
+  {
+    icon: Bolt,
+    title: 'Token-by-token streaming',
+    body: 'Output appears as it is generated over SSE. No spinner-and-wait.',
+    span: 'lg:col-span-2',
+  },
+  {
+    icon: Shield,
+    title: 'Authenticated, not stored',
+    body: 'Every request carries a Clerk JWT. Nothing is persisted by the application.',
+    span: 'lg:col-span-2',
+  },
+];
+
+const STATS = [
+  { to: 15, suffix: ' min', label: 'Typical manual write-up' },
+  { to: 3, suffix: ' min', label: 'With ClinScribe' },
+  { to: 3, suffix: '', label: 'Artifacts per pass' },
+  { to: 0, suffix: '', label: 'Records stored' },
+];
+
+/* ------------------------------------------------------------------
+   Page
+------------------------------------------------------------------ */
 export default function Home() {
+  const root = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+
+  // Mark that JS is running so reveal elements can start hidden.
+  useEffect(() => {
+    document.documentElement.classList.add('js-on');
+    return () => document.documentElement.classList.remove('js-on');
+  }, []);
+
+  useIsoLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      /* ---------- Always on: scroll progress + nav state ---------- */
+      gsap.to('.cs-progress', {
+        scaleX: 1,
+        ease: 'none',
+        scrollTrigger: { start: 0, end: 'max', scrub: 0.3 },
+      });
+
+      let wasScrolled = false;
+      ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: (self) => {
+          const now = self.scroll() > 80;
+          if (now !== wasScrolled) {
+            wasScrolled = now;
+            setScrolled(now);
+          }
+        },
+      });
+
+      /* Workflow step activation: whichever step sits closest to the viewport
+         centre wins. Two earlier approaches were wrong — one ScrollTrigger per
+         step desyncs on jump-scroll (every onToggle fires in creation order and
+         the last wins), and floor(progress * n) assumes uniform step heights.
+         Measuring against the centre is exact regardless of height or origin. */
+      const stepEls = STEPS.map((_, i) => document.querySelector<HTMLElement>(`.flow-step-${i}`));
+      let lastStep = -1;
+      ScrollTrigger.create({
+        trigger: '.flow-rail',
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: () => {
+          const mid = window.innerHeight / 2;
+          let best = 0;
+          let bestDist = Infinity;
+          stepEls.forEach((el, i) => {
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            const d = Math.abs(r.top + r.height / 2 - mid);
+            if (d < bestDist) {
+              bestDist = d;
+              best = i;
+            }
+          });
+          if (best !== lastStep) {
+            lastStep = best;
+            setActiveStep(best);
+          }
+        },
+      });
+
+      /* ---------- Motion-safe block ---------- */
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        /* Hero intro timeline */
+        const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
+        intro
+          .from('.hero-pill', { opacity: 0, y: 18, duration: 0.7 })
+          .from('.hero-word', { opacity: 0, yPercent: 115, rotateX: -55, duration: 1, stagger: 0.06 }, '-=0.35')
+          .from('.hero-lead', { opacity: 0, y: 22, duration: 0.8 }, '-=0.55')
+          .from('.hero-cta > *', { opacity: 0, y: 18, duration: 0.6, stagger: 0.09 }, '-=0.5')
+          .from('.hero-trust', { opacity: 0, y: 14, duration: 0.6 }, '-=0.4')
+          .from('.hero-panel', { opacity: 0, y: 46, scale: 0.95, duration: 1.1 }, '-=0.9')
+          .from('.hero-scrollcue', { opacity: 0, duration: 0.6 }, '-=0.3');
+
+        /* ECG stroke draw — loops */
+        const ecg = document.querySelector<SVGPathElement>('.cs-ecg-path');
+        if (ecg) {
+          const len = ecg.getTotalLength();
+          gsap.set(ecg, { strokeDasharray: len, strokeDashoffset: len });
+          gsap.to(ecg, {
+            strokeDashoffset: 0,
+            duration: 3.2,
+            ease: 'none',
+            repeat: -1,
+            repeatDelay: 0.5,
+          });
+        }
+
+        /* PIN #1 — hero dissolves into the page as you scroll */
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: '.hero',
+              start: 'top top',
+              end: '+=110%',
+              scrub: 1,
+              pin: '.hero-inner',
+              pinSpacing: true,
+            },
+          })
+          .to('.hero-content', { yPercent: -14, opacity: 0, scale: 0.94, ease: 'none' }, 0)
+          .to('.hero-panel', { yPercent: -6, opacity: 0, scale: 0.97, ease: 'none' }, 0.05)
+          .to('.hero-aurora-a', { yPercent: -34, scale: 1.5, ease: 'none' }, 0)
+          .to('.hero-aurora-b', { yPercent: -18, xPercent: 12, ease: 'none' }, 0)
+          .to('.hero-mesh', { yPercent: -12, opacity: 0.25, ease: 'none' }, 0);
+
+        /* Marquee — continuous drift, nudged by scroll velocity */
+        const track = document.querySelector<HTMLElement>('.cs-marquee');
+        if (track) {
+          const half = track.scrollWidth / 2;
+          gsap.to(track, {
+            x: -half,
+            duration: 26,
+            ease: 'none',
+            repeat: -1,
+            modifiers: { x: (v) => `${parseFloat(v) % -half}px` },
+          });
+        }
+
+        /* Generic staggered reveals */
+        gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, y: 26 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.75,
+              ease: 'power3.out',
+              scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
+            }
+          );
+        });
+
+        gsap.utils.toArray<HTMLElement>('[data-reveal-group]').forEach((group) => {
+          gsap.fromTo(
+            group.children,
+            { opacity: 0, y: 30 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              stagger: 0.08,
+              ease: 'power3.out',
+              scrollTrigger: { trigger: group, start: 'top 85%', toggleActions: 'play none none reverse' },
+            }
+          );
+        });
+
+        /* Section headline mask-reveal */
+        gsap.utils.toArray<HTMLElement>('[data-mask-lines]').forEach((el) => {
+          gsap.fromTo(
+            el.querySelectorAll('.mask-line > span'),
+            { yPercent: 108 },
+            {
+              yPercent: 0,
+              duration: 0.95,
+              ease: 'expo.out',
+              stagger: 0.09,
+              scrollTrigger: { trigger: el, start: 'top 84%', toggleActions: 'play none none reverse' },
+            }
+          );
+        });
+
+        /* Counters */
+        gsap.utils.toArray<HTMLElement>('[data-count]').forEach((el) => {
+          const target = Number(el.dataset.count);
+          const obj = { v: 0 };
+          gsap.to(obj, {
+            v: target,
+            duration: 1.6,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+            onUpdate: () => {
+              el.textContent = String(Math.round(obj.v));
+            },
+          });
+        });
+
+        /* Comparison bars */
+        gsap.utils.toArray<HTMLElement>('.cs-bar').forEach((bar) => {
+          gsap.to(bar, {
+            scaleX: Number(bar.dataset.scale ?? 1),
+            duration: 1.4,
+            ease: 'expo.out',
+            scrollTrigger: { trigger: bar, start: 'top 92%', once: true },
+          });
+        });
+
+        /* Subtle parallax on decorative layers */
+        gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
+          gsap.to(el, {
+            yPercent: Number(el.dataset.parallax),
+            ease: 'none',
+            scrollTrigger: { trigger: el.parentElement as HTMLElement, scrub: 0.8 },
+          });
+        });
+
+        /* CTA glow breathes */
+        gsap.to('.cta-glow', {
+          scale: 1.18,
+          opacity: 0.85,
+          duration: 4.5,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        });
+      });
+
+      /* ---------- Reduced motion: render final state ---------- */
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        gsap.set('[data-reveal], [data-reveal-group] > *, .hero-word, .hero-pill, .hero-lead, .hero-cta > *, .hero-trust, .hero-panel', {
+          opacity: 1,
+          y: 0,
+          yPercent: 0,
+          rotateX: 0,
+          scale: 1,
+          clearProps: 'transform',
+        });
+        gsap.utils.toArray<HTMLElement>('[data-count]').forEach((el) => {
+          el.textContent = String(el.dataset.count);
+        });
+      });
+    }, root);
+
+    // Recalculate once webfonts have settled — pinned sections need real heights.
+    const refresh = () => ScrollTrigger.refresh();
+    if (document.fonts?.ready) document.fonts.ready.then(refresh);
+    window.addEventListener('load', refresh);
+
+    return () => {
+      window.removeEventListener('load', refresh);
+      ctx.revert();
+    };
+  }, []);
+
+  /* Cursor-tracked card sheen */
+  const trackPointer = (e: React.MouseEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
+  };
+
   return (
-    <main className="min-h-screen bg-[var(--background)]">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[var(--border)] shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3 animate-slide-left">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                <MedicalCrossIcon />
+    <>
+      <Head>
+        <title>ClinScribe AI — Clinical documentation, structured in one pass</title>
+        <meta
+          name="description"
+          content="Turn raw consultation notes into a record summary, next steps, and a patient-friendly email draft. Streaming AI documentation for clinicians."
+        />
+        <meta name="theme-color" content="#04070C" />
+      </Head>
+
+      <div ref={root} className="cs-dark relative">
+        <div className="cs-progress" aria-hidden="true" />
+
+        {/* ============ NAV ============ */}
+        <nav className="cs-nav" data-scrolled={scrolled}>
+          <div className="max-w-[1240px] mx-auto px-6 lg:px-10">
+            <div className="flex items-center justify-between h-[72px]">
+              <Link href="/" className="flex items-center gap-3 no-underline">
+                <span className="cs-mark">
+                  <Mark className="w-[18px] h-[18px]" />
+                </span>
+                <span className="text-[17px] font-bold tracking-[-0.02em] text-[var(--cs-fg)]">
+                  ClinScribe<span className="text-[var(--cs-cyan)]"> AI</span>
+                </span>
+              </Link>
+
+              <div className="hidden md:flex items-center gap-9">
+                <a href="#how" className="cs-navlink">How it works</a>
+                <a href="#capabilities" className="cs-navlink">Capabilities</a>
+                <a href="#speed" className="cs-navlink">Speed</a>
               </div>
-              <span className="text-xl font-bold text-[var(--dark)]">
-                ClinScribe <span className="text-blue-600">AI</span>
-              </span>
+
+              <div className="flex items-center gap-3">
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <button className="cs-btn !py-2.5 !px-6 !text-[14px]">Sign in</button>
+                  </SignInButton>
+                </SignedOut>
+                <SignedIn>
+                  <Link href="/product" className="cs-btn !py-2.5 !px-6 !text-[14px]">
+                    Dashboard <Arrow />
+                  </Link>
+                  <UserButton />
+                </SignedIn>
+              </div>
             </div>
-            <div className="flex items-center gap-4 animate-slide-right">
+          </div>
+        </nav>
+
+        {/* ============ HERO ============ */}
+        <section className="hero relative">
+          <div className="hero-inner relative min-h-screen flex items-center overflow-hidden cs-noise">
+            {/* Atmosphere */}
+            <div
+              className="cs-aurora cs-aurora--cyan hero-aurora-a"
+              style={{ width: 780, height: 780, top: '-24%', left: '48%', transform: 'translateX(-50%)' }}
+            />
+            <div
+              className="cs-aurora cs-aurora--teal hero-aurora-b"
+              style={{ width: 620, height: 620, bottom: '-28%', left: '-12%' }}
+            />
+            <div
+              className="cs-aurora cs-aurora--emerald"
+              style={{ width: 520, height: 520, top: '18%', right: '-16%' }}
+            />
+            <div className="cs-mesh hero-mesh" />
+            <div className="cs-vignette" />
+
+            <div className="relative w-full max-w-[1240px] mx-auto px-6 lg:px-10 pt-28 pb-16">
+              <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-14 lg:gap-16 items-center">
+                {/* Left */}
+                <div className="hero-content">
+                  <div className="hero-pill">
+                    <span className="cs-pill">
+                      <span className="cs-dot" />
+                      Public beta
+                    </span>
+                  </div>
+
+                  <h1 className="cs-display text-[clamp(2.6rem,7vw,4.9rem)] mt-7">
+                    <span className="block overflow-hidden pb-[0.08em]">
+                      <span className="hero-word inline-block">Clinical</span>{' '}
+                      <span className="hero-word inline-block">notes</span>{' '}
+                      <span className="hero-word inline-block">in.</span>
+                    </span>
+                    <span className="block overflow-hidden pb-[0.08em]">
+                      <span className="hero-word inline-block cs-shimmer-text">Structured</span>
+                    </span>
+                    <span className="block overflow-hidden pb-[0.08em]">
+                      <span className="hero-word inline-block cs-shimmer-text">records</span>{' '}
+                      <span className="hero-word inline-block">out.</span>
+                    </span>
+                  </h1>
+
+                  <p className="hero-lead cs-lead text-[17px] lg:text-[19px] mt-7 max-w-[30rem]">
+                    Paste the encounter exactly as you scribbled it. Get back a record summary,
+                    a prioritized follow-up list, and a patient-ready email — streamed token by
+                    token, in a single pass.
+                  </p>
+
+                  <div className="hero-cta flex flex-wrap gap-3.5 mt-9">
+                    <SignedOut>
+                      <SignInButton mode="modal">
+                        <button className="cs-btn">
+                          <Pulse className="w-[18px] h-[18px]" />
+                          Open the assistant
+                        </button>
+                      </SignInButton>
+                    </SignedOut>
+                    <SignedIn>
+                      <Link href="/product" className="cs-btn">
+                        <Pulse className="w-[18px] h-[18px]" />
+                        Open the assistant
+                      </Link>
+                    </SignedIn>
+                    <a href="#how" className="cs-btn-ghost">
+                      See how it works
+                    </a>
+                  </div>
+
+                  <div className="hero-trust flex flex-wrap items-center gap-x-7 gap-y-3 mt-10 text-[13px] text-[var(--cs-fg-dim)]">
+                    <span className="flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-[var(--cs-teal)]" /> Clerk-authenticated
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <Bolt className="w-4 h-4 text-[var(--cs-teal)]" /> Streaming output
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-[var(--cs-teal)]" /> No data stored
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right — device panel */}
+                <div className="hero-panel relative">
+                  <div className="cs-glass p-0">
+                    {/* Titlebar */}
+                    <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--cs-line)]">
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#3B4A5E]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#3B4A5E]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#3B4A5E]" />
+                      </div>
+                      <span className="cs-eyebrow !text-[10px] !tracking-[0.18em]">consultation · live</span>
+                      <span className="cs-dot" />
+                    </div>
+
+                    {/* ECG */}
+                    <div className="px-5 pt-5">
+                      <svg viewBox="0 0 1200 120" className="w-full h-[68px]" preserveAspectRatio="none" aria-hidden="true">
+                        <defs>
+                          <linearGradient id="csEcgGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#0E9AAF" />
+                            <stop offset="50%" stopColor="#22D3EE" />
+                            <stop offset="100%" stopColor="#10B981" />
+                          </linearGradient>
+                        </defs>
+                        <path className="cs-ecg-track" d={ECG_PATH} />
+                        <path className="cs-ecg-path" d={ECG_PATH} />
+                      </svg>
+                    </div>
+
+                    {/* Vitals */}
+                    <div className="grid grid-cols-3 gap-3 px-5 pt-4">
+                      {[
+                        { l: 'BP', v: '140/90' },
+                        { l: 'HR', v: '88' },
+                        { l: 'SpO₂', v: '97%' },
+                      ].map((m) => (
+                        <div key={m.l} className="rounded-xl border border-[var(--cs-line)] bg-white/[0.02] px-3.5 py-3">
+                          <div className="font-[family-name:var(--cs-mono)] text-[10px] tracking-[0.16em] text-[var(--cs-fg-dim)] uppercase">
+                            {m.l}
+                          </div>
+                          <div className="text-[19px] font-semibold text-[var(--cs-fg)] tracking-[-0.02em] mt-0.5">
+                            {m.v}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Output stream */}
+                    <div className="mx-5 my-5 rounded-xl border border-[var(--cs-line)] bg-[#060A11]/80 px-4 py-4">
+                      <div className="cs-terminal">
+                        <div className="k">### Summary of visit</div>
+                        <div>58yo male, 3-day non-radiating chest pain.</div>
+                        <div>Hypertensive, on lisinopril 10mg.</div>
+                        <div className="k mt-1">### Next steps</div>
+                        <div className="g">1. Review EKG and troponin</div>
+                        <div className="g">
+                          2. Cardiology referral if elevated<span className="cs-caret ml-1" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating chip */}
+                  <div
+                    className="hidden xl:flex w-max absolute -left-14 -bottom-7 cs-glass !rounded-2xl px-4 py-3 items-center gap-3 shadow-2xl"
+                    data-parallax="-14"
+                  >
+                    <span className="w-9 h-9 rounded-lg grid place-items-center bg-[rgba(16,185,129,0.12)] text-[var(--cs-emerald)]">
+                      <Clock className="w-[18px] h-[18px]" />
+                    </span>
+                    <div>
+                      <div className="text-[13px] font-semibold text-[var(--cs-fg)]">~3 min saved</div>
+                      <div className="text-[11px] text-[var(--cs-fg-dim)]">per consultation</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Scroll cue */}
+              <div className="hero-scrollcue hidden lg:flex flex-col items-center gap-2 absolute left-1/2 -translate-x-1/2 bottom-6 text-[var(--cs-fg-dim)]">
+                <span className="font-[family-name:var(--cs-mono)] text-[10px] tracking-[0.24em] uppercase">Scroll</span>
+                <Chevron className="w-4 h-4 animate-bounce" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============ MARQUEE ============ */}
+        <section className="relative py-7 border-y border-[var(--cs-line)] bg-[var(--cs-abyss)]">
+          <div className="cs-marquee-mask overflow-hidden">
+            <div className="cs-marquee gap-10">
+              {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+                <span key={i} className="flex items-center gap-10 shrink-0">
+                  <span className="font-[family-name:var(--cs-mono)] text-[12px] tracking-[0.16em] uppercase text-[var(--cs-fg-dim)] whitespace-nowrap">
+                    {item}
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-[var(--cs-teal)]" />
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ============ PROBLEM ============ */}
+        <section className="relative py-28 lg:py-36 overflow-hidden">
+          <div
+            className="cs-aurora cs-aurora--teal"
+            style={{ width: 640, height: 640, top: '-20%', right: '-18%', opacity: 0.55 }}
+            data-parallax="-10"
+          />
+          <div className="relative max-w-[1240px] mx-auto px-6 lg:px-10">
+            <div className="max-w-[52rem]">
+              <span className="cs-eyebrow" data-reveal>The problem</span>
+              <h2 className="cs-h2 text-[clamp(2rem,4.6vw,3.4rem)] mt-6" data-mask-lines>
+                <span className="mask-line block overflow-hidden pb-[0.06em]">
+                  <span className="inline-block">Documentation is the tax</span>
+                </span>
+                <span className="mask-line block overflow-hidden pb-[0.06em]">
+                  <span className="inline-block text-[var(--cs-fg-dim)]">clinicians pay for seeing patients.</span>
+                </span>
+              </h2>
+              <p className="cs-lead text-[17px] lg:text-[18px] mt-7 max-w-[38rem]" data-reveal>
+                Every encounter ends the same way: a blank field and fifteen minutes of retyping
+                what you already know. ClinScribe compresses that into one streamed pass — and
+                keeps the clinician in the editing seat, where they belong.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mt-16" data-reveal-group>
+              {STATS.map((s) => (
+                <div key={s.label} className="cs-card !p-7" onMouseMove={trackPointer}>
+                  <div className="cs-stat-num text-[clamp(2.2rem,5vw,3.2rem)] leading-none">
+                    <span data-count={s.to}>0</span>
+                    <span className="text-[0.5em] font-medium tracking-[-0.01em]">{s.suffix}</span>
+                  </div>
+                  <div className="text-[13px] text-[var(--cs-fg-dim)] mt-3 leading-snug">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ============ WORKFLOW (scroll-telling) ============ */}
+        <section id="how" className="flow relative">
+          <div className="max-w-[1240px] mx-auto px-6 lg:px-10 py-20 lg:py-28">
+            <div className="max-w-[46rem] mb-16 lg:mb-24">
+              <span className="cs-eyebrow" data-reveal>How it works</span>
+              <h2 className="cs-h2 text-[clamp(2rem,4.6vw,3.2rem)] mt-6" data-mask-lines>
+                <span className="mask-line block overflow-hidden pb-[0.06em]">
+                  <span className="inline-block">Three steps.</span>
+                </span>
+                <span className="mask-line block overflow-hidden pb-[0.06em]">
+                  <span className="inline-block text-[var(--cs-fg-dim)]">One request.</span>
+                </span>
+              </h2>
+            </div>
+
+            {/* No items-start: both columns must stretch to the row height,
+                otherwise the sticky column has no travel distance. */}
+            <div className="grid lg:grid-cols-2 gap-14 lg:gap-20">
+              {/* Steps rail */}
+              <div className="flow-rail order-2 lg:order-1">
+                {STEPS.map((s, i) => {
+                  const Icon = s.icon;
+                  return (
+                    <div
+                      key={s.n}
+                      className={`flow-step-${i} cs-step py-12 lg:py-0 lg:min-h-[74vh] lg:flex lg:flex-col lg:justify-center`}
+                      data-active={activeStep === i}
+                    >
+                      <div className="flex items-center gap-4 mb-5">
+                        <span className="cs-step-index">{s.n}</span>
+                        <span className="w-10 h-10 rounded-xl grid place-items-center border border-[var(--cs-line)] bg-white/[0.03] text-[var(--cs-cyan)]">
+                          <Icon className="w-[19px] h-[19px]" />
+                        </span>
+                      </div>
+                      <h3 className="text-[22px] lg:text-[26px] font-bold tracking-[-0.025em] text-[var(--cs-fg)] mb-4">
+                        {s.title}
+                      </h3>
+                      <p className="cs-lead text-[16px] max-w-[27rem]">{s.body}</p>
+
+                      {/* Mobile panel (pinning is desktop-only) */}
+                      <div className="lg:hidden mt-8">
+                        <Panel index={i} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Pinned visual */}
+              <div className="flow-visual order-1 lg:order-2 hidden lg:block">
+                <div className="sticky top-[92px] h-[calc(100vh-92px)] flex items-center">
+                  <div className="w-full relative">
+                    <div
+                      className="cs-aurora cs-aurora--cyan"
+                      style={{ width: 460, height: 460, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: 0.4 }}
+                    />
+                    <div className="relative">
+                      <Panel index={activeStep} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============ CAPABILITIES ============ */}
+        <section id="capabilities" className="relative py-28 lg:py-36 overflow-hidden bg-[var(--cs-abyss)] border-y border-[var(--cs-line)]">
+          <div className="cs-mesh" style={{ opacity: 0.45 }} />
+          <div className="relative max-w-[1240px] mx-auto px-6 lg:px-10">
+            <div className="max-w-[46rem] mb-14">
+              <span className="cs-eyebrow" data-reveal>Capabilities</span>
+              <h2 className="cs-h2 text-[clamp(2rem,4.6vw,3.2rem)] mt-6" data-mask-lines>
+                <span className="mask-line block overflow-hidden pb-[0.06em]">
+                  <span className="inline-block">Built narrow.</span>
+                </span>
+                <span className="mask-line block overflow-hidden pb-[0.06em]">
+                  <span className="inline-block text-[var(--cs-fg-dim)]">Built to be correct.</span>
+                </span>
+              </h2>
+            </div>
+
+            <div className="grid lg:grid-cols-6 gap-4 lg:gap-5" data-reveal-group>
+              {FEATURES.map((f) => {
+                const Icon = f.icon;
+                return (
+                  <div key={f.title} className={`cs-card ${f.span}`} onMouseMove={trackPointer}>
+                    <span className="w-11 h-11 rounded-xl grid place-items-center bg-[rgba(34,211,238,0.09)] border border-[rgba(34,211,238,0.18)] text-[var(--cs-cyan)] mb-6">
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    <h3 className="text-[18px] font-bold tracking-[-0.02em] text-[var(--cs-fg)] mb-2.5">{f.title}</h3>
+                    <p className="text-[14.5px] leading-[1.65] text-[var(--cs-fg-soft)] font-light">{f.body}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ============ SPEED ============ */}
+        <section id="speed" className="relative py-28 lg:py-36 overflow-hidden">
+          <div
+            className="cs-aurora cs-aurora--cyan"
+            style={{ width: 700, height: 700, bottom: '-30%', left: '-14%', opacity: 0.5 }}
+            data-parallax="-8"
+          />
+          <div className="relative max-w-[1240px] mx-auto px-6 lg:px-10">
+            <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+              <div>
+                <span className="cs-eyebrow" data-reveal>Time per consultation</span>
+                <h2 className="cs-h2 text-[clamp(2rem,4.4vw,3.1rem)] mt-6" data-mask-lines>
+                  <span className="mask-line block overflow-hidden pb-[0.06em]">
+                    <span className="inline-block">Fifteen minutes,</span>
+                  </span>
+                  <span className="mask-line block overflow-hidden pb-[0.06em]">
+                    <span className="inline-block cs-shimmer-text">compressed to three.</span>
+                  </span>
+                </h2>
+                <p className="cs-lead text-[16.5px] mt-7 max-w-[30rem]" data-reveal>
+                  The model drafts; you review and edit. The bottleneck moves from typing to
+                  judgment — which is the only part that needed a clinician anyway.
+                </p>
+              </div>
+
+              <div className="cs-card !p-8 lg:!p-10" onMouseMove={trackPointer} data-reveal>
+                <div className="space-y-9">
+                  <div>
+                    <div className="flex items-baseline justify-between mb-3.5">
+                      <span className="font-[family-name:var(--cs-mono)] text-[11px] tracking-[0.18em] uppercase text-[var(--cs-fg-dim)]">
+                        Manual write-up
+                      </span>
+                      <span className="text-[26px] font-bold text-[var(--cs-fg-dim)] tracking-[-0.03em]">15 min</span>
+                    </div>
+                    <div className="h-2.5 rounded-full bg-white/[0.05] overflow-hidden">
+                      <div className="cs-bar cs-bar--old" data-scale="1" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-baseline justify-between mb-3.5">
+                      <span className="font-[family-name:var(--cs-mono)] text-[11px] tracking-[0.18em] uppercase text-[var(--cs-cyan)]">
+                        With ClinScribe
+                      </span>
+                      <span className="cs-stat-num text-[26px] tracking-[-0.03em]">3 min</span>
+                    </div>
+                    <div className="h-2.5 rounded-full bg-white/[0.05] overflow-hidden">
+                      <div className="cs-bar cs-bar--new" data-scale="0.2" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="cs-rule my-9" />
+
+                <div className="grid grid-cols-3 gap-5">
+                  {[
+                    { v: '3', l: 'Artifacts' },
+                    { v: '1', l: 'Request' },
+                    { v: '0', l: 'Records kept' },
+                  ].map((x) => (
+                    <div key={x.l}>
+                      <div className="text-[24px] font-bold text-[var(--cs-fg)] tracking-[-0.03em]">{x.v}</div>
+                      <div className="text-[12px] text-[var(--cs-fg-dim)] mt-1">{x.l}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============ CTA ============ */}
+        <section className="relative py-32 lg:py-40 overflow-hidden border-t border-[var(--cs-line)]">
+          <div
+            className="cta-glow cs-aurora cs-aurora--cyan"
+            style={{ width: 820, height: 560, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: 0.55 }}
+          />
+          <div className="cs-mesh" style={{ opacity: 0.6 }} />
+
+          <div className="relative max-w-[820px] mx-auto px-6 text-center">
+            <span className="cs-pill mb-8 inline-flex" data-reveal>
+              <span className="cs-dot" />
+              Ready when you are
+            </span>
+            <h2 className="cs-h2 text-[clamp(2.2rem,5.4vw,3.9rem)]" data-mask-lines>
+              <span className="mask-line block overflow-hidden pb-[0.06em]">
+                <span className="inline-block">Give the paperwork</span>
+              </span>
+              <span className="mask-line block overflow-hidden pb-[0.06em]">
+                <span className="inline-block cs-shimmer-text">back its three minutes.</span>
+              </span>
+            </h2>
+            <p className="cs-lead text-[17px] mt-7 max-w-[34rem] mx-auto" data-reveal>
+              Sign in and run your first consultation through it. No setup, no template library,
+              no migration.
+            </p>
+            <div className="flex flex-wrap gap-3.5 justify-center mt-10" data-reveal>
               <SignedOut>
                 <SignInButton mode="modal">
-                  <button className="medical-button text-sm py-2.5 px-5">
-                    Sign In
+                  <button className="cs-btn !px-9 !py-[17px] !text-[16px]">
+                    Get started <Arrow />
                   </button>
                 </SignInButton>
               </SignedOut>
               <SignedIn>
-                <div className="flex items-center gap-4">
-                  <Link href="/product" className="medical-button text-sm py-2.5 px-5">
-                    Go to Dashboard
-                  </Link>
-                  <UserButton showName={true} />
-                </div>
+                <Link href="/product" className="cs-btn !px-9 !py-[17px] !text-[16px]">
+                  Launch dashboard <Arrow />
+                </Link>
               </SignedIn>
+              <a href="#how" className="cs-btn-ghost !px-9 !py-[17px] !text-[16px]">
+                Read the flow
+              </a>
             </div>
           </div>
-        </div>
-      </nav>
+        </section>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden tech-grid">
-        <div className="particle-bg">
-          {[...Array(9)].map((_, i) => (
-            <div key={i} className="particle" />
+        {/* ============ FOOTER ============ */}
+        <footer className="relative bg-[var(--cs-abyss)] border-t border-[var(--cs-line)] pt-16 pb-10">
+          <div className="max-w-[1240px] mx-auto px-6 lg:px-10">
+            {/* Disclaimer — accurate, not decorative */}
+            <div className="rounded-2xl border border-[rgba(245,181,70,0.22)] bg-[rgba(245,181,70,0.05)] px-6 py-5 mb-14 flex gap-4 items-start">
+              <span className="mt-0.5 text-[var(--cs-amber)] shrink-0">
+                <Shield className="w-5 h-5" />
+              </span>
+              <p className="text-[13.5px] leading-[1.7] text-[#D9C49A]">
+                <strong className="font-semibold text-[var(--cs-amber)]">Demo project.</strong>{' '}
+                Consultation notes are transmitted to a third-party AI provider (OpenAI). This is
+                not a HIPAA-compliant service and carries no security certifications — do not
+                enter real protected health information (PHI).
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-[1.6fr_1fr_1fr] gap-12">
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="cs-mark">
+                    <Mark className="w-[18px] h-[18px]" />
+                  </span>
+                  <span className="text-[17px] font-bold tracking-[-0.02em]">
+                    ClinScribe<span className="text-[var(--cs-cyan)]"> AI</span>
+                  </span>
+                </div>
+                <p className="text-[14px] leading-[1.7] text-[var(--cs-fg-dim)] max-w-[24rem] font-light">
+                  Clinical documentation assistant. Notes in, structured records out — built as a
+                  technical demonstration by Carlos Egana.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="cs-eyebrow !text-[10px] mb-5">Product</h4>
+                <ul className="space-y-3 text-[14px]">
+                  {[
+                    { l: 'How it works', h: '#how' },
+                    { l: 'Capabilities', h: '#capabilities' },
+                    { l: 'Speed', h: '#speed' },
+                  ].map((x) => (
+                    <li key={x.l}>
+                      <a href={x.h} className="cs-navlink">{x.l}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="cs-eyebrow !text-[10px] mb-5">Stack</h4>
+                <ul className="space-y-3 text-[14px] text-[var(--cs-fg-dim)] font-light">
+                  <li>Next.js · React · TypeScript</li>
+                  <li>FastAPI · Python</li>
+                  <li>Clerk · OpenAI · Vercel</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="cs-rule my-10" />
+
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-[13px] text-[var(--cs-fg-dim)]">
+              <p>© 2026 ClinScribe AI · Developed by Carlos Egana</p>
+              <p className="font-[family-name:var(--cs-mono)] text-[11px] tracking-[0.14em] uppercase">
+                Demo build · Not for clinical use
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------
+   Workflow panel
+------------------------------------------------------------------ */
+function Panel({ index }: { index: number }) {
+  const panel = STEP_PANELS[index] ?? STEP_PANELS[0];
+  const labels = ['input', 'processing', 'output'];
+
+  return (
+    <div className="cs-glass">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--cs-line)]">
+        <span className="cs-eyebrow !text-[10px] !tracking-[0.18em]">
+          step {String(index + 1).padStart(2, '0')} · {labels[index] ?? ''}
+        </span>
+        <div className="flex gap-1.5">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="h-1 rounded-full transition-all duration-500"
+              style={{
+                width: i === index ? 22 : 8,
+                background: i === index ? 'var(--cs-cyan)' : 'rgba(148,183,214,0.22)',
+              }}
+            />
           ))}
         </div>
-        
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-20 pb-32 relative">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left Content */}
-            <div className="space-y-8 animate-slide-up">
-              <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-2">
-                <span className="w-2 h-2 bg-blue-600 rounded-full animate-medical-pulse" />
-                <span className="text-sm font-medium text-blue-700">Developed by Carlos Egana</span>
-              </div>
-              
-              <h1 className="text-5xl lg:text-6xl font-bold text-[var(--dark)] leading-tight">
-                Transform Medical Documentation with{' '}
-                <span className="medical-gradient-text">AI Technology</span>
-              </h1>
-              
-              <p className="text-xl text-[var(--dark-gray)] leading-relaxed max-w-xl">
-                Advanced clinical intelligence that converts patient encounters into structured, 
-                compliant medical records in seconds. Save time, reduce errors, and focus on patient care.
-              </p>
+      </div>
 
-              <div className="flex flex-wrap gap-4">
-                <SignedOut>
-                  <SignInButton mode="modal">
-                    <button className="medical-button text-lg">
-                      <StethoscopeIcon />
-                      Start Free Trial
-                    </button>
-                  </SignInButton>
-                </SignedOut>
-                <SignedIn>
-                  <Link href="/product">
-                    <button className="medical-button text-lg">
-                      <StethoscopeIcon />
-                      Open Clinical Assistant
-                    </button>
-                  </Link>
-                </SignedIn>
-                <button className="medical-button-secondary">
-                  <DocumentIcon />
-                  View Demo
-                </button>
-              </div>
-
-              {/* Trust Badges */}
-              <div className="flex flex-wrap gap-6 pt-4">
-                <div className="flex items-center gap-2 text-[var(--medium-gray)] text-sm">
-                  <ShieldIcon />
-                  <span>HIPAA Compliant</span>
-                </div>
-                <div className="flex items-center gap-2 text-[var(--medium-gray)] text-sm">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  <span>256-bit Encryption</span>
-                </div>
-                <div className="flex items-center gap-2 text-[var(--medium-gray)] text-sm">
-                  <ActivityIcon />
-                  <span>ISO 27001 Certified</span>
-                </div>
-              </div>
+      <div className="px-5 py-6 min-h-[236px]">
+        <div className="cs-terminal">
+          {panel.lines.map((l, i) => (
+            <div key={`${index}-${i}`} className={l.c}>
+              {l.t}
             </div>
-
-            {/* Right Content - Dashboard Preview */}
-            <div className="relative animate-smooth-float">
-              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-teal-500 opacity-20 blur-3xl rounded-full" />
-              <div className="relative bg-white rounded-2xl shadow-2xl border border-[var(--border)] overflow-hidden">
-                {/* Mock Dashboard Header */}
-                <div className="bg-gradient-to-r from-blue-700 to-teal-700 px-6 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white">
-                    <MedicalCrossIcon />
-                    <span className="font-semibold">ClinScribe AI</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-400" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                    <div className="w-3 h-3 rounded-full bg-green-400" />
-                  </div>
-                </div>
-                
-                {/* Mock Content */}
-                <div className="p-6 space-y-4">
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <label className="text-xs text-[var(--medium-gray)] uppercase font-medium">Patient</label>
-                      <div className="mt-1 px-4 py-3 bg-[var(--off-white)] rounded-lg border border-[var(--border)] text-[var(--dark)]">
-                        Frank Martin
-                      </div>
-                    </div>
-                    <div className="w-32">
-                      <label className="text-xs text-[var(--medium-gray)] uppercase font-medium">Date</label>
-                      <div className="mt-1 px-4 py-3 bg-[var(--off-white)] rounded-lg border border-[var(--border)] text-[var(--dark)]">
-                        2026-03-15
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="text-xs text-[var(--medium-gray)] uppercase font-medium">Clinical Notes</label>
-                    <div className="mt-1 px-4 py-3 bg-[var(--off-white)] rounded-lg border border-[var(--border)] h-24 font-mono text-sm text-[var(--dark-gray)]">
-                      58yo patient with chest pain...
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2 text-teal-600">
-                      <span className="w-2 h-2 bg-teal-600 rounded-full animate-medical-pulse" />
-                      <span className="text-sm font-medium">AI Processing...</span>
-                    </div>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium">
-                      Generate
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* Stats Section */}
-      <section className="bg-white py-16 border-y border-[var(--border)]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            {stats.map((stat, i) => (
-              <div key={i} className="text-center animate-slide-up" style={{animationDelay: `${i * 0.1}s`}}>
-                <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                  <stat.icon />
-                </div>
-                <div className="text-4xl font-bold text-[var(--dark)] mb-1">{stat.value}</div>
-                <div className="text-sm text-[var(--medium-gray)]">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-24 bg-[var(--off-white)]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-[var(--dark)] mb-4">
-              Clinical Intelligence Platform
-            </h2>
-            <p className="text-lg text-[var(--dark-gray)]">
-              Powered by state-of-the-art machine learning algorithms trained on millions of clinical encounters
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, i) => (
-              <div 
-                key={i} 
-                className="medical-card group"
-                style={{animationDelay: `${i * 0.1}s`}}
-              >
-                <div className={`w-14 h-14 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center text-white mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
-                  <feature.icon />
-                </div>
-                <h3 className="text-xl font-bold text-[var(--dark)] mb-3">{feature.title}</h3>
-                <p className="text-[var(--dark-gray)] leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-24 bg-gradient-to-br from-[var(--charcoal)] to-[var(--dark)] text-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Built for Modern Healthcare
-              </h2>
-              <p className="text-[var(--light-gray)] text-lg mb-8">
-                Every feature is engineered to enhance clinical workflow efficiency 
-                while maintaining the highest standards of medical documentation.
-              </p>
-              
-              <div className="space-y-4">
-                {[
-                  'Reduce documentation time by 75%',
-                  'Eliminate transcription errors',
-                  'Improve clinical decision support',
-                  'Ensure regulatory compliance',
-                  'Seamless EHR integration',
-                ].map((benefit, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="w-8 h-8 bg-blue-600/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <CheckIcon />
-                    </div>
-                    <span className="text-[var(--light-gray)]">{benefit}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-teal-600 rounded-3xl blur-2xl opacity-20" />
-              <div className="relative bg-[var(--charcoal)]/80 backdrop-blur-sm border border-[var(--dark-gray)] rounded-3xl p-8">
-                <div className="flex items-center gap-4 mb-8 pb-6 border-b border-[var(--dark-gray)]">
-                  <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                    <ClockIcon />
-                  </div>
-                  <div>
-                    <div className="text-white font-semibold text-lg">Time Efficiency</div>
-                    <div className="text-[var(--medium-gray)]">Per consultation average</div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center p-6 bg-[var(--dark)] rounded-2xl border border-[var(--dark-gray)]">
-                    <div className="text-4xl font-bold text-[var(--medium-gray)] mb-2">15min</div>
-                    <div className="text-[var(--medium-gray)] text-sm">Traditional</div>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-600/20 to-teal-600/20 rounded-2xl border border-blue-500/30">
-                    <div className="text-4xl font-bold text-blue-400 mb-2">3min</div>
-                    <div className="text-white text-sm">With ClinScribe</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--dark)] mb-4">
-            Ready to Transform Your Practice?
-          </h2>
-          <p className="text-lg text-[var(--dark-gray)] mb-8 max-w-2xl mx-auto">
-            Join hundreds of healthcare providers who have revolutionized their clinical documentation workflow.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <SignedOut>
-              <SignInButton mode="modal">
-                <button className="medical-button text-lg px-10">
-                  Get Started Free
-                </button>
-              </SignInButton>
-            </SignedOut>
-            <SignedIn>
-              <Link href="/product">
-                <button className="medical-button text-lg px-10">
-                  Launch Dashboard
-                </button>
-              </Link>
-            </SignedIn>
-            <button className="medical-button-secondary text-lg px-10">
-              Contact Sales
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-[var(--off-white)] border-t border-[var(--border)] py-12">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-teal-600 rounded-lg flex items-center justify-center text-white">
-                  <MedicalCrossIcon />
-                </div>
-                <span className="text-lg font-bold text-[var(--dark)]">
-                  ClinScribe <span className="text-blue-600">AI</span>
-                </span>
-              </div>
-              <p className="text-[var(--medium-gray)] max-w-sm">
-                Advanced clinical documentation powered by artificial intelligence. 
-                Developed by Carlos Egana.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-[var(--dark)] mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-[var(--medium-gray)]">
-                <li><a href="#" className="hover:text-blue-600 transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-blue-600 transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-blue-600 transition-colors">Security</a></li>
-                <li><a href="#" className="hover:text-blue-600 transition-colors">API</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-[var(--dark)] mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-[var(--medium-gray)]">
-                <li><a href="#" className="hover:text-blue-600 transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-blue-600 transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-blue-600 transition-colors">HIPAA Compliance</a></li>
-                <li><a href="#" className="hover:text-blue-600 transition-colors">Security</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-[var(--border)] mt-12 pt-8 text-center text-sm text-[var(--medium-gray)]">
-            <p>© 2026 ClinScribe AI. Advanced clinical technology. Developed by Carlos Egana.</p>
-          </div>
-        </div>
-      </footer>
-    </main>
+      <div className="px-5 py-3.5 border-t border-[var(--cs-line)] flex items-center gap-2.5">
+        <span className="cs-dot" />
+        <span className="font-[family-name:var(--cs-mono)] text-[11px] tracking-[0.14em] uppercase text-[var(--cs-fg-dim)]">
+          {index === 2 ? 'complete' : 'streaming'}
+        </span>
+      </div>
+    </div>
   );
 }

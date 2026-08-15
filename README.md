@@ -19,6 +19,11 @@
 
 > **Developed by Carlos Egana** — Advanced clinical documentation powered by AI
 
+> ⚠️ **Disclaimer:** This is a portfolio / demo project. Consultation notes are
+> sent to a third-party AI provider (OpenAI). It is **not** a HIPAA-compliant
+> service and carries no security certifications. **Do not enter real protected
+> health information (PHI).**
+
 **Problem:** Healthcare providers spend 2+ hours daily on documentation, taking time away from patient care.
 
 **Solution:** ClinScribe AI reduces documentation time by 75%, generating professional medical summaries in under 3 minutes.
@@ -28,7 +33,7 @@ AI-powered medical consultation assistant that transforms doctor's notes into pr
 ## Overview
 ![Dashboard](img/dashboad.png)
 
-ClinScribe AI (operating as **MediNotes Pro**) is a HIPAA-compliant SaaS platform designed for healthcare professionals. It leverages artificial intelligence to streamline the documentation process after patient consultations, saving time and ensuring consistent, professional medical records.
+ClinScribe AI (operating as **MediNotes Pro**) is a demo SaaS platform that illustrates how AI can streamline documentation after patient consultations. It turns free-text notes into a structured summary, next steps, and a patient-friendly email draft. It is intended as a technical demonstration, not a certified clinical product.
 
 **Status:** ✅ Public beta — Core features stable and ready for testing
 
@@ -77,7 +82,7 @@ Watch ClinScribe AI in action — from entering patient notes to generating a co
 - **Preview Deployments** — Automatic branch preview URLs
 
 ### OpenAI (AI Processing)
-- **GPT-5-nano** — Streaming consultation summaries via Server-Sent Events
+- **Configurable model** — Set via `OPENAI_MODEL` (defaults to `gpt-4o-mini`); streaming consultation summaries via Server-Sent Events
 - **FastAPI Backend** — Python API with Clerk JWT validation
 - **Real-time Output** — Markdown-formatted responses delivered progressively
 
@@ -95,7 +100,7 @@ Watch ClinScribe AI in action — from entering patient notes to generating a co
 ### Backend
 - **API Framework:** FastAPI (Python)
 - **Authentication:** Clerk JWT validation
-- **AI Model:** OpenAI GPT-5-nano
+- **AI Model:** OpenAI (configurable via `OPENAI_MODEL`, default `gpt-4o-mini`)
 - **Streaming:** SSE for real-time response delivery
 
 ## Architecture
@@ -185,10 +190,15 @@ saas/
 
 ## Security & Compliance
 
-- **HIPAA Awareness:** Designed with healthcare data sensitivity in mind
 - **JWT Authentication:** All API calls authenticated via Clerk
-- **No Data Persistence:** Consultation data processed in real-time, not stored
-- **Secure Streaming:** SSE connections authorized per-request
+- **No Data Persistence:** Consultation data is processed in real-time and not stored by the app
+- **Per-request Authorization:** SSE connections are authorized per-request
+- **Input Limits & Rate Limiting:** Payload sizes are bounded and per-user requests are rate-limited
+- **Prompt-injection Guardrail:** Patient notes are treated as data, not instructions
+
+> **Not HIPAA compliant.** Notes are transmitted to OpenAI for processing. There
+> is no Business Associate Agreement (BAA), no encryption-at-rest of PHI, and no
+> third-party security certification. Do not use with real patient data.
 
 ## Environment Variables
 
@@ -198,6 +208,10 @@ saas/
 | `CLERK_SECRET_KEY` | Clerk backend key | `.env.local` |
 | `OPENAI_API_KEY` | OpenAI API access | `api/.env` |
 | `CLERK_JWKS_URL` | Clerk JWKS endpoint | `api/.env` |
+| `OPENAI_MODEL` | Model name (default `gpt-4o-mini`) | `api/.env` (optional) |
+| `OPENAI_TIMEOUT` | Request timeout in seconds (default `60`) | `api/.env` (optional) |
+| `RATE_LIMIT_MAX` | Max requests per window (default `10`) | `api/.env` (optional) |
+| `RATE_LIMIT_WINDOW` | Rate-limit window in seconds (default `60`) | `api/.env` (optional) |
 
 ## API Endpoint
 
