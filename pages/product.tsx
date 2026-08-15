@@ -214,20 +214,22 @@ function ConsultationForm() {
                                 />
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-2 relative z-20">
                                 <label htmlFor="date" className="flex items-center gap-2 text-sm font-semibold text-[var(--dark-gray)]">
                                     <CalendarIcon />
                                     Consultation Date
                                 </label>
-                                <DatePicker
-                                    id="date"
-                                    selected={visitDate}
-                                    onChange={(d: Date | null) => setVisitDate(d)}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="Select date"
-                                    required
-                                    className="w-full px-4 py-3 bg-[var(--off-white)] border-2 border-[var(--border)] rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-[var(--dark)]"
-                                />
+                                <div className="relative">
+                                  <DatePicker
+                                      id="date"
+                                      selected={visitDate}
+                                      onChange={(d: Date | null) => setVisitDate(d)}
+                                      dateFormat="yyyy-MM-dd"
+                                      placeholderText="Select date"
+                                      required
+                                      className="w-full px-4 py-3 bg-[var(--off-white)] border-2 border-[var(--border)] rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-[var(--dark)]"
+                                  />
+                                </div>
                             </div>
                         </div>
                     </div>
