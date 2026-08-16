@@ -4,10 +4,15 @@
 
 # ClinScribe AI
 
-### `clinical notes in` → `structured records out`
+### The visit is over. The paperwork isn't.
 
-Paste the encounter exactly as you scribbled it. Get back a visit summary, a prioritized
-follow-up list, and a patient-ready message — streamed in a single pass, with you as the editor.
+**Every clinician pays the same tax.** The patient walks out, and then comes the second shift —
+hours a day retyping what you already know, while the waiting room fills and dinner goes cold.
+Documentation has quietly become the reason good clinicians burn out.
+
+**ClinScribe AI hands that time back.** Paste the encounter exactly as you scribbled it —
+abbreviations, fragments, vitals and all. Get back a clean visit summary, a prioritized
+follow-up list, and a patient-ready message. One pass. You stay the editor.
 
 <br/>
 
@@ -37,6 +42,28 @@ follow-up list, and a patient-ready message — streamed in a single pass, with 
 <img src="docs/clinscribe-product-form.gif" width="820" alt="Consultation form" />
 
 </div>
+
+---
+
+## Why this exists
+
+Clinicians didn't train for years to become typists. Yet after every encounter the same ritual
+repeats: open a blank field, reconstruct what just happened, and translate it three times over —
+once for the chart, once for the care plan, once for the patient. It's repetitive, it's
+error-prone when you're tired, and it's the quiet thief of both clinical time and attention.
+
+ClinScribe AI attacks exactly that moment. It takes the messy, real-world notes you already
+write and turns them into three finished artifacts in a single streamed pass — so the writing is
+done by the time you've read it, and your job shrinks to what it should have been all along:
+reviewing and approving, not retyping.
+
+**The output is always the same three sections, every time:**
+
+```
+### Summary of visit for the doctor's records
+### Next steps for the doctor
+### Draft of email to patient in patient-friendly language
+```
 
 ---
 
@@ -71,12 +98,6 @@ flowchart LR
 
 Every generation returns exactly three sections. The backend verifies their presence before
 closing the stream.
-
-```
-### Summary of visit for the doctor's records
-### Next steps for the doctor
-### Draft of email to patient in patient-friendly language
-```
 
 **Request**
 
