@@ -179,6 +179,7 @@ npm run dev     # → http://localhost:3000
 - **Overlay clipping** — the date picker renders through a portal so it escapes the card's
   containing block instead of being clipped by it.
 
+
 ---
 
 ## Status
