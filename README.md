@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="img/Logo.jpeg" width="440" alt="ClinScribe AI — Streams documentation. Restores care." />
+<img src="https://raw.githubusercontent.com/carloseganac/ClinScribe-AI/main/img/Logo.jpeg" width="440" alt="ClinScribe AI — Streams documentation. Restores care." />
 
 ### The visit is over. The paperwork isn't.
 
@@ -30,7 +30,7 @@ follow-up list, and a patient-ready message. One pass. You stay the editor.
 Messy notes in. Three finished clinical artifacts out — streamed token by token, in seconds.
 
 <div align="center">
-  <img src="img/demo.gif" width="880" alt="ClinScribe AI end-to-end demo" />
+  <img src="https://raw.githubusercontent.com/carloseganac/ClinScribe-AI/main/img/demo.gif" width="880" alt="ClinScribe AI end-to-end demo" />
 </div>
 
 ---
@@ -57,7 +57,7 @@ A single promise, no onboarding maze. Clinical intelligence that converts encoun
 structured, compliant records — in seconds.
 
 <div align="center">
-  <img src="img/dashboad.png" width="880" alt="ClinScribe AI landing page" />
+  <img src="https://raw.githubusercontent.com/carloseganac/ClinScribe-AI/main/img/dashboad.png" width="880" alt="ClinScribe AI landing page" />
 </div>
 
 <br/>
@@ -68,7 +68,7 @@ Patient, date, and the raw note. Fragments, abbreviations, vitals, dosages — n
 fill, no fields to fight. Notes are bounded at 8 000 characters and treated strictly as data.
 
 <div align="center">
-  <img src="img/consultation_notes.png" width="880" alt="Consultation notes input form" />
+  <img src="https://raw.githubusercontent.com/carloseganac/ClinScribe-AI/main/img/consultation_notes.png" width="880" alt="Consultation notes input form" />
 </div>
 
 <br/>
@@ -79,7 +79,7 @@ The response streams live as Markdown. Same three sections, every single time �
 verifies their presence before it closes the stream.
 
 <div align="center">
-  <img src="img/generated_doc.png" width="880" alt="Generated clinical documentation" />
+  <img src="https://raw.githubusercontent.com/carloseganac/ClinScribe-AI/main/img/generated_doc.png" width="880" alt="Generated clinical documentation" />
 </div>
 
 ```
