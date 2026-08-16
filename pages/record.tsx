@@ -53,6 +53,8 @@ const CalendarIcon = () => (
 
 // Vercel serverless functions cap the request body; keep the upload under it.
 const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
+// Give up before the platform does, so the user gets a real message instead of a hang.
+const UPLOAD_TIMEOUT_MS = 90_000;
 
 type TranscribeResponse = {
     filename: string;
@@ -238,27 +240,64 @@ function ConsultationRecorder() {
             form.append('duration', formatClock(recordedSeconds || elapsed));
 
             setStage('Structuring the doctor’s instructions...');
-            const res = await fetch('/api/transcribe', {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${jwt}` },
-                body: form,
-            });
+
+            // Fail fast and loudly instead of hanging until the platform kills it.
+            const abort = new AbortController();
+            const timeout = setTimeout(() => abort.abort(), UPLOAD_TIMEOUT_MS);
+
+            let res: Response;
+            try {
+                res = await fetch('/api/transcribe', {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${jwt}` },
+                    body: form,
+                    signal: abort.signal,
+                });
+            } finally {
+                clearTimeout(timeout);
+            }
 
             if (!res.ok) {
-                let detail = 'Could not process the recording. Please try again.';
+                // Read the body as text first: a platform-level failure (504, crash page)
+                // returns HTML, and blindly calling res.json() would hide the real cause.
+                const raw = await res.text().catch(() => '');
+                let detail = '';
                 try {
-                    const body = await res.json();
-                    if (body?.detail) detail = String(body.detail);
-                } catch { /* non-JSON error body */ }
-                if (res.status === 429) detail = 'Rate limit reached. Wait a minute and try again.';
-                if (res.status === 401) detail = 'Your session expired. Please sign in again.';
+                    const parsed = JSON.parse(raw);
+                    if (parsed?.detail) detail = String(parsed.detail);
+                } catch { /* not JSON — keep the raw text */ }
+
+                if (res.status === 401) {
+                    detail = 'Your session expired. Please sign in again.';
+                } else if (res.status === 429) {
+                    detail = 'Rate limit reached. Wait a minute and try again.';
+                } else if (res.status === 404) {
+                    detail =
+                        'The /api/transcribe endpoint was not found. The Python function is not ' +
+                        'running — start the app with `vercel dev`, not `npm run dev`.';
+                } else if (!detail) {
+                    const snippet = raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300);
+                    detail = snippet
+                        ? `HTTP ${res.status}: ${snippet}`
+                        : `HTTP ${res.status} with an empty response body.`;
+                }
+                console.error('[transcribe] failed', res.status, raw.slice(0, 2000));
                 setError(detail);
                 return;
             }
 
             setResult((await res.json()) as TranscribeResponse);
-        } catch {
-            setError('Network error while uploading the recording.');
+        } catch (err) {
+            const e = err as Error;
+            if (e?.name === 'AbortError') {
+                setError(
+                    `The request did not finish within ${UPLOAD_TIMEOUT_MS / 1000}s. Check the terminal ` +
+                    'running the dev server (or the Vercel function logs) for the underlying error.'
+                );
+            } else {
+                setError(`Network error while uploading: ${e?.message || 'unknown'}`);
+            }
+            console.error('[transcribe] error', err);
         } finally {
             setProcessing(false);
             setStage('');
