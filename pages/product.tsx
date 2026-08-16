@@ -59,6 +59,108 @@ const ShieldIcon = () => (
   </svg>
 );
 
+const AlertIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3L13.74 4a2 2 0 00-3.48 0L3.33 16a2 2 0 001.74 3z" />
+  </svg>
+);
+
+// --- Fidelity verification types (mirrors the backend `grounding` SSE frame) ---
+type Claim = {
+    claim: string;
+    kind: 'factual' | 'guidance';
+    quote: string;
+    supported: boolean;
+};
+
+type Grounding = {
+    score: number;
+    factual_claims: number;
+    unsupported_claims: number;
+    claims: Claim[];
+};
+
+/**
+ * Fidelity panel. Every patient-specific claim in the generated document is
+ * anchored back to a verbatim span of the doctor's own notes. Anything that
+ * could not be anchored is surfaced here instead of being quietly trusted.
+ */
+function FidelityPanel({ grounding, verifying }: { grounding: Grounding | null; verifying: boolean }) {
+    if (verifying) {
+        return (
+            <div className="medical-card bg-white mb-6 flex items-center gap-3">
+                <svg className="animate-spin h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                <span className="text-sm font-medium text-[var(--dark-gray)]">
+                    Verifying every claim against your notes...
+                </span>
+            </div>
+        );
+    }
+
+    if (!grounding) return null;
+
+    const pct = Math.round(grounding.score * 100);
+    const unsupported = grounding.claims.filter((c) => c.kind === 'factual' && !c.supported);
+    const clean = unsupported.length === 0;
+
+    const tone = clean
+        ? { bar: 'bg-emerald-500', chip: 'bg-emerald-100 text-emerald-800', ring: 'border-emerald-200' }
+        : pct >= 80
+            ? { bar: 'bg-amber-500', chip: 'bg-amber-100 text-amber-900', ring: 'border-amber-300' }
+            : { bar: 'bg-red-500', chip: 'bg-red-100 text-red-800', ring: 'border-red-300' };
+
+    return (
+        <div className={`medical-card bg-white mb-6 border-2 ${tone.ring}`}>
+            <div className="flex items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg ${clean ? 'bg-gradient-to-br from-emerald-600 to-emerald-700' : 'bg-gradient-to-br from-amber-500 to-amber-600'}`}>
+                        {clean ? <ShieldIcon /> : <AlertIcon />}
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-[var(--dark)]">Source fidelity</h3>
+                        <p className="text-sm text-[var(--medium-gray)]">
+                            {grounding.factual_claims - unsupported.length} of {grounding.factual_claims} patient-specific
+                            claims traced back to your notes
+                        </p>
+                    </div>
+                </div>
+                <span className={`shrink-0 px-3 py-1 rounded-full text-sm font-bold ${tone.chip}`}>{pct}%</span>
+            </div>
+
+            <div className="h-2 w-full bg-[var(--border)] rounded-full overflow-hidden mb-4">
+                <div className={`h-full ${tone.bar} transition-all duration-700`} style={{ width: `${pct}%` }} />
+            </div>
+
+            {clean ? (
+                <p className="text-sm text-emerald-800">
+                    Every clinical claim about this patient is supported by a span of your original note.
+                    General guidance is excluded from this check. Review before signing.
+                </p>
+            ) : (
+                <div>
+                    <p className="text-sm font-semibold text-amber-900 mb-3">
+                        Not supported by your notes — verify before signing:
+                    </p>
+                    <ul className="space-y-2">
+                        {unsupported.map((c, i) => (
+                            <li
+                                key={i}
+                                className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"
+                            >
+                                <span className="text-amber-600 mt-0.5 shrink-0">&#9888;</span>
+                                <span className="text-sm text-amber-900">{c.claim}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
+
 function ConsultationForm() {
     const { getToken } = useAuth();
 
@@ -68,10 +170,14 @@ function ConsultationForm() {
 
     const [output, setOutput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [verifying, setVerifying] = useState(false);
+    const [grounding, setGrounding] = useState<Grounding | null>(null);
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault();
         setOutput('');
+        setGrounding(null);
+        setVerifying(false);
         setLoading(true);
 
         const jwt = await getToken();
@@ -111,7 +217,15 @@ function ConsultationForm() {
             },
             onmessage(ev) {
                 if (!ev.data) return;
-                let payload: { text?: string; error?: string; done?: boolean; valid?: boolean; missing_sections?: string[] };
+                let payload: {
+                    text?: string;
+                    error?: string;
+                    done?: boolean;
+                    valid?: boolean;
+                    missing_sections?: string[];
+                    verifying?: boolean;
+                    grounding?: Grounding | null;
+                };
                 try {
                     payload = JSON.parse(ev.data);
                 } catch {
@@ -120,6 +234,7 @@ function ConsultationForm() {
                 if (payload.error) {
                     setOutput((prev) => `${prev}\n\n⚠️ ${payload.error}`);
                     setLoading(false);
+                    setVerifying(false);
                     controller.abort();
                     return;
                 }
@@ -127,20 +242,31 @@ function ConsultationForm() {
                     buffer += payload.text; // newlines preserved via JSON
                     setOutput(buffer);
                 }
+                if (payload.verifying) {
+                    setLoading(false);   // the document itself is complete
+                    setVerifying(true);  // the fidelity check is still running
+                }
+                if ('grounding' in payload) {
+                    setGrounding(payload.grounding ?? null);
+                    setVerifying(false);
+                }
                 if (payload.done) {
                     if (!payload.valid) {
                         console.warn('Incomplete summary, missing sections:', payload.missing_sections);
                     }
                     setLoading(false);
+                    setVerifying(false);
                 }
             },
             onclose() {
                 setLoading(false);
+                setVerifying(false);
             },
             onerror(err) {
                 console.error('SSE error:', err);
                 controller.abort();
                 setLoading(false);
+                setVerifying(false);
                 throw err; // stop fetchEventSource's automatic retry loop
             },
         });
@@ -167,7 +293,16 @@ function ConsultationForm() {
                                 </span>
                             </div>
                         </div>
-                        <UserButton showName={true} />
+                        <div className="flex items-center gap-4">
+                            <Link
+                                href="/record"
+                                className="hidden sm:flex items-center gap-2 text-sm font-semibold text-teal-700 hover:text-teal-800 border-2 border-teal-200 hover:border-teal-300 rounded-xl px-4 py-2 transition-all"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-teal-600" />
+                                Record consultation
+                            </Link>
+                            <UserButton showName={true} />
+                        </div>
                     </div>
                 </div>
             </header>
@@ -304,6 +439,8 @@ function ConsultationForm() {
                             )}
                         </div>
                         
+                        <FidelityPanel grounding={grounding} verifying={verifying} />
+
                         <div className="medical-card bg-white">
                             <div className="markdown-content prose prose-blue max-w-none">
                                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
