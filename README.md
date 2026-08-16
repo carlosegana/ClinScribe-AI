@@ -1,8 +1,6 @@
 <div align="center">
 
-<br/>
-
-# ClinScribe AI
+<img src="img/Logo.jpeg" width="440" alt="ClinScribe AI — Streams documentation. Restores care." />
 
 ### The visit is over. The paperwork isn't.
 
@@ -23,24 +21,16 @@ follow-up list, and a patient-ready message. One pass. You stay the editor.
 [![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=flat-square&logo=clerk&logoColor=white)](https://clerk.com)
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com)
 
-<br/>
-
 </div>
 
 ---
 
+## See it run
+
+Messy notes in. Three finished clinical artifacts out — streamed token by token, in seconds.
+
 <div align="center">
-
-**Landing**
-
-<img src="docs/clinscribe-landing-scroll.gif" width="820" alt="Landing page" />
-
-<br/><br/>
-
-**Consultation**
-
-<img src="docs/clinscribe-product-form.gif" width="820" alt="Consultation form" />
-
+  <img src="img/demo.gif" width="880" alt="ClinScribe AI end-to-end demo" />
 </div>
 
 ---
@@ -55,9 +45,42 @@ error-prone when you're tired, and it's the quiet thief of both clinical time an
 ClinScribe AI attacks exactly that moment. It takes the messy, real-world notes you already
 write and turns them into three finished artifacts in a single streamed pass — so the writing is
 done by the time you've read it, and your job shrinks to what it should have been all along:
-reviewing and approving, not retyping.
+**reviewing and approving, not retyping.**
 
-**The output is always the same three sections, every time:**
+---
+
+## How it works
+
+### 1 · Land
+
+A single promise, no onboarding maze. Clinical intelligence that converts encounters into
+structured, compliant records — in seconds.
+
+<div align="center">
+  <img src="img/dashboad.png" width="880" alt="ClinScribe AI landing page" />
+</div>
+
+<br/>
+
+### 2 · Write it the way you actually write it
+
+Patient, date, and the raw note. Fragments, abbreviations, vitals, dosages — no template to
+fill, no fields to fight. Notes are bounded at 8 000 characters and treated strictly as data.
+
+<div align="center">
+  <img src="img/consultation_notes.png" width="880" alt="Consultation notes input form" />
+</div>
+
+<br/>
+
+### 3 · Get three finished artifacts
+
+The response streams live as Markdown. Same three sections, every single time — the backend
+verifies their presence before it closes the stream.
+
+<div align="center">
+  <img src="img/generated_doc.png" width="880" alt="Generated clinical documentation" />
+</div>
 
 ```
 ### Summary of visit for the doctor's records
@@ -95,9 +118,6 @@ flowchart LR
 ---
 
 ## Output contract
-
-Every generation returns exactly three sections. The backend verifies their presence before
-closing the stream.
 
 **Request**
 
@@ -178,7 +198,6 @@ npm run dev     # → http://localhost:3000
   a note are reported as content, not obeyed.
 - **Overlay clipping** — the date picker renders through a portal so it escapes the card's
   containing block instead of being clipped by it.
-
 
 ---
 
